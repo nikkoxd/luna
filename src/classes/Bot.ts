@@ -2,6 +2,7 @@ import { ApplicationCommandDataResolvable, Client, Collection, Events, Interacti
 import { Command } from "../interfaces/Command";
 import path from "path";
 import { readdirSync } from "fs";
+import { Event } from "../interfaces/Event";
 
 export class Bot {
   public commands = new Array<ApplicationCommandDataResolvable>();
@@ -13,9 +14,27 @@ export class Bot {
     this.client.on(Events.ClientReady, readyClient => {
       console.log(`Ready! Logged in as ${readyClient.user.tag}`)
 
+      this.registerEvents();
       this.registerCommands();
       this.onInteractionCreate();
     });
+  }
+
+  private async registerEvents() {
+    const eventsPath = path.join(__dirname, '..', 'events');
+    const eventFiles = readdirSync(eventsPath).filter(file => !file.endsWith('.map'));
+
+    for (const file of eventFiles) {
+      const filePath = path.join(eventsPath, file);
+      const event = await import(filePath);
+      const eventClass: Event = event.default;
+
+      if (eventClass.once) {
+        this.client.once(eventClass.name, (...args) => eventClass.execute(...args));
+      } else {
+        this.client.on(eventClass.name, (...args) => eventClass.execute(...args));
+      }
+    }
   }
 
   private async registerCommands() {

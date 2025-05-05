@@ -7,7 +7,8 @@ dotenv.config();
 export const bot = new Bot(
   new Client({
     intents: [
-      GatewayIntentBits.Guilds
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMembers
     ]
   })
 )
