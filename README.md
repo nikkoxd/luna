@@ -38,18 +38,11 @@ TOKEN=<your-bot-token>
 CLIENT_ID=<your-client-id>
 ```
 
-### 4. Building the project
-
-The following command will create a `build` directory with the compiled code:
-```bash
-npm run build
-```
-
-### 5. Running the bot
+### 4. Running the bot
 
 **Locally**
 ```bash
-node src/index.js
+npm run build && node src/index.js
 ```
 
 **Start a development server**
