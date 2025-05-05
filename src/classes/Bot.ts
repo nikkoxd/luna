@@ -1,8 +1,8 @@
 import { ApplicationCommandDataResolvable, Client, Collection, Events, Interaction, REST, Routes } from "discord.js";
-import { Command } from "../interfaces/Command";
+import { Command } from "../types/Command";
 import path from "path";
 import { readdirSync } from "fs";
-import { Event } from "../interfaces/Event";
+import { Event } from "../types/Event";
 
 export class Bot {
   public commands = new Array<ApplicationCommandDataResolvable>();

@@ -1,5 +1,5 @@
 import { Events, GuildMember } from "discord.js";
-import { Event } from "../interfaces/Event";
+import { Event } from "../types/Event";
 
 const GuildMemberAdd: Event = {
   name: Events.GuildMemberAdd,
