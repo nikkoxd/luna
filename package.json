@@ -1,0 +1,21 @@
+{
+  "name": "luna",
+  "version": "1.0.0",
+  "description": "General purpose Discord.js bot",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "discord.js": "^14.19.3",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2"
+  }
+}
