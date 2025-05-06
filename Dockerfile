@@ -47,6 +47,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Copy the rest of the source files into the image.
 COPY . .
 # Run the build script.
+RUN pnpm drizzle-kit generate
 RUN pnpm run build
 
 ################################################################################
@@ -67,7 +68,8 @@ COPY package.json .
 # the built application from the build stage into the image.
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/build ./build
-
+COPY --from=build /usr/src/app/drizzle ./drizzle
+COPY --from=build /usr/src/app/drizzle.config.js .
 
 # Expose the port that the application listens on.
 EXPOSE 3000

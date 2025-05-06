@@ -1,21 +1,24 @@
 import { ApplicationCommandDataResolvable, Client, Collection, Events, Interaction, REST, Routes } from "discord.js";
-import { Command } from "../types/Command";
+import { Command } from "./types/Command";
 import path from "path";
 import { readdirSync } from "fs";
-import { Event } from "../types/Event";
-import { Pool } from "pg";
+import { Event } from "./types/Event";
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
 
 export class Bot {
   public commands = new Array<ApplicationCommandDataResolvable>();
   public commandsCollection = new Collection<string, Command>();
 
-  public constructor(public client: Client, public pool: Pool) {
+  public constructor(public client: Client, public drizzle: NodePgDatabase) {
     client.login(process.env.TOKEN);
 
     this.client.on(Events.ClientReady, readyClient => {
       console.log(`Ready! Logged in as ${readyClient.user.tag}`)
 
-      this.createTables();
+      migrate(this.drizzle, {
+        migrationsFolder: path.join(__dirname, '..', 'drizzle'),
+      });
 
       this.registerEvents();
       this.registerCommands();
@@ -23,16 +26,8 @@ export class Bot {
     });
   }
 
-  private async createTables() {
-    await this.pool.query("create table if not exists guilds \
-                                         (id bigint primary key, \
-                                          language char(2) default 'en', \
-                                          announce_joins boolean default true \
-                                         );");
-  }
-
   private async registerEvents() {
-    const eventsPath = path.join(__dirname, '..', 'events');
+    const eventsPath = path.join(__dirname, 'events');
     const eventFiles = readdirSync(eventsPath).filter(file => !file.endsWith('.map'));
 
     for (const file of eventFiles) {
@@ -51,7 +46,7 @@ export class Bot {
   private async registerCommands() {
     const rest = new REST().setToken(process.env.TOKEN!);
 
-    const commandsPath = path.join(__dirname, "..", "commands");
+    const commandsPath = path.join(__dirname, "commands");
     const commandFiles = readdirSync(commandsPath).filter(file => !file.endsWith(".map"));
 
     for (const file of commandFiles) {
