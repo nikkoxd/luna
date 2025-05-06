@@ -35,7 +35,10 @@ pnpm install
 Create a `.env` file in the root directory of the project and add the following variables:
 ```dotenv
 TOKEN=<your-bot-token>
-CLIENT_ID=<your-client-id>
+POSTGRES_HOST=<your-db-hostname>
+POSTGRES_USER=<your-db-username>
+POSTGRES_PASSWORD=<your-db-password>
+POSTGRES_DB=<your-db-name>
 ```
 
 ### 4. Running the bot
