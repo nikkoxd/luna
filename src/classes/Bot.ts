@@ -3,21 +3,32 @@ import { Command } from "../types/Command";
 import path from "path";
 import { readdirSync } from "fs";
 import { Event } from "../types/Event";
+import { Pool } from "pg";
 
 export class Bot {
   public commands = new Array<ApplicationCommandDataResolvable>();
   public commandsCollection = new Collection<string, Command>();
 
-  public constructor(public client: Client) {
+  public constructor(public client: Client, public pool: Pool) {
     client.login(process.env.TOKEN);
 
     this.client.on(Events.ClientReady, readyClient => {
       console.log(`Ready! Logged in as ${readyClient.user.tag}`)
 
+      this.createTables();
+
       this.registerEvents();
       this.registerCommands();
       this.onInteractionCreate();
     });
+  }
+
+  private async createTables() {
+    await this.pool.query("create table if not exists guilds \
+                                         (id bigint primary key, \
+                                          language char(2) default 'en', \
+                                          announce_joins boolean default true \
+                                         );");
   }
 
   private async registerEvents() {
@@ -53,8 +64,8 @@ export class Bot {
     }
 
     try {
-      rest.put(Routes.applicationCommands(process.env.CLIENT_ID!), { body: this.commands })
-    } catch(error: any) {
+      rest.put(Routes.applicationCommands(this.client.user!.id), { body: this.commands })
+    } catch (error: any) {
       console.error(error);
     } finally {
       console.log("Registered commands");
@@ -70,7 +81,7 @@ export class Bot {
 
       try {
         command.execute(interaction);
-      } catch(error) {
+      } catch (error) {
         console.error(error);
       } finally {
         console.log(`Command executed: ${command.data.name}`);

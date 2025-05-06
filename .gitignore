@@ -1,3 +1,4 @@
-node_modules
 build
+data
+node_modules
 .env
