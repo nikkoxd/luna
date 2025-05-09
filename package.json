@@ -17,7 +17,8 @@
     "i18next": "^25.1.1",
     "i18next-fs-backend": "^2.6.0",
     "pg": "^8.15.6",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/pg": "^8.12.0",

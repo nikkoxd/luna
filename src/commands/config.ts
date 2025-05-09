@@ -43,11 +43,11 @@ const ConfigCommand: Command = {
       .set({ [key]: value })
       .where(eq(guilds.id, Number(interaction.guildId)))
       .then(() => {
-        console.info(`Updated ${key} to ${value} in guild ${interaction.guildId}.`);
+        bot.logger.info(`Updated ${key} to ${value} in guild ${interaction.guildId}.`);
         interaction.reply(i18next.t("command.config.reply.success", { key, value, lng: locale }));
       })
       .catch((error: Error) => {
-        console.error(`Error while updating ${key} to ${value} in guild ${interaction.guildId}: ${error}`);
+        bot.logger.error(`Error while updating ${key} to ${value} in guild ${interaction.guildId}: ${error}`);
         interaction.reply(i18next.t("command.config.reply.error", { error, key, value, lng: locale }));
       })
   }

@@ -7,16 +7,17 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import i18next, { InitOptions } from "i18next";
 import Backend from "i18next-fs-backend";
+import { Logger } from "winston";
 
 export class Bot {
   public commands = new Array<ApplicationCommandDataResolvable>();
   public commandsCollection = new Collection<string, Command>();
 
-  public constructor(public client: Client, public drizzle: NodePgDatabase, private i18nextOptions: InitOptions) {
+  public constructor(public client: Client, public drizzle: NodePgDatabase, public logger: Logger, private i18nextOptions: InitOptions) {
     client.login(process.env.TOKEN);
 
     this.client.on(Events.ClientReady, readyClient => {
-      console.info(`Ready! Logged in as ${readyClient.user.tag}`)
+      this.logger.info(`Ready! Logged in as ${readyClient.user.tag}`)
 
       i18next
         .use(Backend)
@@ -67,9 +68,9 @@ export class Bot {
     try {
       rest.put(Routes.applicationCommands(this.client.user!.id), { body: this.commands })
     } catch (error: any) {
-      console.error(error);
+      this.logger.error(error);
     } finally {
-      console.info("Registered commands");
+      this.logger.info("Registered commands");
     }
   }
 
@@ -83,9 +84,9 @@ export class Bot {
       try {
         command.execute(interaction);
       } catch (error) {
-        console.error(error);
+        this.logger.error(error);
       } finally {
-        console.info(`Command /${command.data.name} executed by ${interaction.user.tag} (${interaction.user.id})`);
+        this.logger.info(`Command /${command.data.name} executed by ${interaction.user.tag} (${interaction.user.id})`);
       }
     })
   }
