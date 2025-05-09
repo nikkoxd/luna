@@ -15,8 +15,8 @@ const ConfigCommand: Command = {
         .setName("key")
         .setDescription("The option to configure")
         .addChoices(
-          { name: "locale", value: "locale" },
-          { name: "announceJoins", value: "announceJoins" },
+          { name: "Locale - en/ru", value: "locale" },
+          { name: "Announce Joins - true/false", value: "announceJoins" },
         )
         .setRequired(true)
     )
