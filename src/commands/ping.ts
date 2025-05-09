@@ -9,12 +9,10 @@ const PingCommand: Command = {
     .setDescription("Pong!"),
 
   async execute(interaction: ChatInputCommandInteraction) {
-    if (!interaction.guildId) return;
-
-    const locale = interaction.locale;
+    const ping = bot.client.ws.ping;
     interaction.reply(i18next.t("command.ping.reply", {
-      ping: bot.client.ws.ping,
-      lng: locale,
+      ping: ping,
+      lng: interaction.locale,
     }));
   }
 };
