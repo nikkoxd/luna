@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import { Bot } from "./Bot";
+import { Bot } from "./bot";
 import dotenv from "dotenv";
 import { drizzle } from "drizzle-orm/node-postgres";
 
@@ -19,5 +19,12 @@ export const bot = new Bot(
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
     }
-  })
+  }),
+  {
+    fallbackLng: "en",
+    preload: ["en", "ru"],
+    backend: {
+      loadPath: "./locales/{{lng}}.json",
+    }
+  },
 )

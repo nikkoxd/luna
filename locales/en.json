@@ -1,0 +1,15 @@
+{
+  "greeting": "Weclome to {{guild}}, <@{{memberId}}>! Please read the rules and guidelines before chatting.",
+  "command": {
+    "ping": {
+      "reply": "Pong! {{ping}} ms"
+    },
+    "config": {
+      "reply": {
+        "success": "Configuration generated for {{guild}}",
+        "already_generated": "No need to configure this server",
+        "error": "Error: {{error}}"
+      }
+    }
+  }
+}

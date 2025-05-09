@@ -5,16 +5,22 @@ import { readdirSync } from "fs";
 import { Event } from "./types/Event";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
+import i18next, { InitOptions } from "i18next";
+import Backend from "i18next-fs-backend";
 
 export class Bot {
   public commands = new Array<ApplicationCommandDataResolvable>();
   public commandsCollection = new Collection<string, Command>();
 
-  public constructor(public client: Client, public drizzle: NodePgDatabase) {
+  public constructor(public client: Client, public drizzle: NodePgDatabase, private i18nextOptions: InitOptions) {
     client.login(process.env.TOKEN);
 
     this.client.on(Events.ClientReady, readyClient => {
       console.log(`Ready! Logged in as ${readyClient.user.tag}`)
+
+      i18next
+        .use(Backend)
+        .init(this.i18nextOptions);
 
       migrate(this.drizzle, {
         migrationsFolder: path.join(__dirname, '..', 'drizzle'),

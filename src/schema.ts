@@ -1,8 +1,8 @@
-import { bigint, boolean, char, integer, pgTable } from "drizzle-orm/pg-core";
+import { bigint, boolean, char, pgTable } from "drizzle-orm/pg-core";
 
 export const guilds = pgTable("guilds", {
   id: bigint({ mode: "number" }).primaryKey(),
-  language: char({ length: 2 }).default("en"),
+  locale: char({ length: 2 }).default("en"),
   announceJoins: boolean().default(true),
 })
 

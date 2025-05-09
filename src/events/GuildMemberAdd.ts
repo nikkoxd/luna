@@ -1,16 +1,23 @@
 import { Events, GuildFeature, GuildMember } from "discord.js";
 import { Event } from "../types/Event";
+import i18next from "i18next";
+import { getGuildLocale } from "../utils";
 
 const GuildMemberAdd: Event = {
   name: Events.GuildMemberAdd,
   once: false,
-  execute(member: GuildMember) {
+  async execute(member: GuildMember) {
     if (
       member.guild.features.includes(GuildFeature.MemberVerificationGateEnabled) ||
       !member.guild.systemChannel
     ) return;
 
-    member.guild.systemChannel.send(`Welcome to ${member.guild.name}, <@${member.id}>! Please read the rules and guidelines before chatting.`);
+    const locale = await getGuildLocale(member.guild.id);
+    member.guild.systemChannel.send(i18next.t("greeting", {
+      guild: member.guild.name,
+      memberId: member.user.id,
+      lng: locale,
+    }));
   }
 }
 
