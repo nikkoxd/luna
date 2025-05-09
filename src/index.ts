@@ -27,7 +27,6 @@ export const bot = new Bot(
     transports: [new transports.Console()]
   }),
   {
-    debug: true,
     fallbackLng: "en",
     preload: ["en", "ru"],
     backend: {
