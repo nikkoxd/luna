@@ -16,7 +16,7 @@ export class Bot {
     client.login(process.env.TOKEN);
 
     this.client.on(Events.ClientReady, readyClient => {
-      console.log(`Ready! Logged in as ${readyClient.user.tag}`)
+      console.info(`Ready! Logged in as ${readyClient.user.tag}`)
 
       i18next
         .use(Backend)
@@ -69,7 +69,7 @@ export class Bot {
     } catch (error: any) {
       console.error(error);
     } finally {
-      console.log("Registered commands");
+      console.info("Registered commands");
     }
   }
 
@@ -85,7 +85,7 @@ export class Bot {
       } catch (error) {
         console.error(error);
       } finally {
-        console.log(`Command executed: ${command.data.name}`);
+        console.info(`Command /${command.data.name} executed by ${interaction.user.tag} (${interaction.user.id})`);
       }
     })
   }

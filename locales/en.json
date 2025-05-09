@@ -6,9 +6,9 @@
     },
     "config": {
       "reply": {
-        "success": "Configuration generated for {{guild}}",
-        "already_generated": "No need to configure this server",
-        "error": "Error: {{error}}"
+        "only_on_servers": "This command can only be used in a server.",
+        "success": "Successfully updated `{{key}}` to `{{value}}`.",
+        "error": "Error while updating configuration: `{{error}}`."
       }
     }
   }

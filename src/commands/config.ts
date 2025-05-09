@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import { Command } from "../types/Command";
 import { bot } from "..";
 import { guilds } from "../schema";
@@ -8,31 +8,48 @@ import i18next from "i18next";
 const ConfigCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("config")
-    .setDescription("Generate the bot's configuration"),
+    .setDescription("Configure the bot")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .addStringOption(option =>
+      option
+        .setName("key")
+        .setDescription("The option to configure")
+        .addChoices(
+          { name: "locale", value: "locale" },
+          { name: "announceJoins", value: "announceJoins" },
+        )
+        .setRequired(true)
+    )
+    .addStringOption(option =>
+      option
+        .setName("value")
+        .setDescription("Option value")
+        .setRequired(true)
+    ),
 
   async execute(interaction: ChatInputCommandInteraction) {
-    if (!interaction.guildId) return;
-
     const locale = interaction.locale;
-    const guildConfig = await bot.drizzle.select().from(guilds).where(eq(guilds.id, Number(interaction.guildId)));
-    if (guildConfig.length > 0) {
-      interaction.reply(i18next.t("command.config.reply.already_generated", { lng: locale }))
-      return;
-    }
 
-    bot.drizzle.insert(guilds).values({ id: Number(interaction.guildId) }).returning().then(result => {
-      console.log(result);
-      interaction.reply(i18next.t("command.config.reply.success", {
-        guild: interaction.guild!.name,
-        lng: locale,
-      }));
-    }).catch(error => {
-      console.error(error);
-      interaction.reply(i18next.t("command.config.reply.error", {
-        error: error,
-        lng: locale,
-      }));
-    });
+    if (!interaction.guildId) {
+      interaction.reply(i18next.t("command.config.reply.only_on_servers", { lng: locale }));
+      return;
+    };
+
+    const key = interaction.options.getString("key", true);
+    const value = interaction.options.getString("value", true);
+
+    bot.drizzle
+      .update(guilds)
+      .set({ [key]: value })
+      .where(eq(guilds.id, Number(interaction.guildId)))
+      .then(() => {
+        console.info(`Updated ${key} to ${value} in guild ${interaction.guildId}.`);
+        interaction.reply(i18next.t("command.config.reply.success", { key, value, lng: locale }));
+      })
+      .catch(error => {
+        console.error(`Error while updating ${key} to ${value} in guild ${interaction.guildId}: ${error}`);
+        interaction.reply(i18next.t("command.config.reply.error", { error, key, value, lng: locale }));
+      })
   }
 }
 
