@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import { Bot } from "./bot";
+import { Bot } from "./Bot";
 import dotenv from "dotenv";
 import { drizzle } from "drizzle-orm/node-postgres";
 

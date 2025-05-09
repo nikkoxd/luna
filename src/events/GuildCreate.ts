@@ -18,7 +18,7 @@ const GuildCreate: Event = {
 
     bot.drizzle.insert(guilds).values({ id: Number(guild.id) }).then(() => {
       console.info("Guild configured.")
-    }).catch(error => {
+    }).catch((error: Error) => {
       console.error(`Error while configuring guild: ${error}`);
     });
   }
