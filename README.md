@@ -1,6 +1,6 @@
 # 🌙 Luna
 
-Luna is a general-purpose Discord bot built using Node.js and the Discord.js library.
+Luna is a general-purpose Discord bot built using Node.js and Discord.js.
 
 ## Prerequisites
 
