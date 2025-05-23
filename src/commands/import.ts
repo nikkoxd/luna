@@ -44,10 +44,10 @@ const ImportCommand: Command = {
             guildId: z.string(),
             roleId: z.string(),
             expiryDate: z.number(),
-          })),
+          })).optional(),
           __v: z.number(),
-          exp: z.number(),
-          level: z.number(),
+          exp: z.number().optional(),
+          level: z.number().optional(),
           rooms: z.array(z.string()).optional(),
         })
       );
