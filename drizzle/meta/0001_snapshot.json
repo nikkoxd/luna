@@ -1,6 +1,6 @@
 {
-  "id": "bd1771c6-c377-4b06-865e-edb865a14457",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "03fb2657-e9ae-4957-b052-b9588560a04d",
+  "prevId": "bd1771c6-c377-4b06-865e-edb865a14457",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -69,21 +69,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "members_guildId_guilds_id_fk": {
-          "name": "members_guildId_guilds_id_fk",
-          "tableFrom": "members",
-          "tableTo": "guilds",
-          "columnsFrom": [
-            "guildId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {
         "members_id_guildId_pk": {
           "name": "members_id_guildId_pk",

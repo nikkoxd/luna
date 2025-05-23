@@ -4,6 +4,7 @@
   "description": "General purpose Discord.js bot",
   "main": "build/index.js",
   "scripts": {
+    "db:generate": "drizzle-kit generate",
     "build": "tsc",
     "dev": "nodemon src/index.ts"
   },
