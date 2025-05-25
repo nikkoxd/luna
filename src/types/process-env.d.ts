@@ -2,6 +2,7 @@ namespace NodeJS {
   interface ProcessEnv {
     [key: string]: string | undefined;
     TOKEN: string;
+    AUTHOR_ID: string | undefined;
     POSTGRES_HOST: string;
     POSTGRES_USER: string;
     POSTGRES_PASSWORD: string;

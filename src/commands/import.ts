@@ -3,6 +3,7 @@ import { Command } from "../types/Command";
 import { bot } from "..";
 import { members } from "../schema";
 import { z } from "zod";
+import i18next from "i18next";
 
 const ImportCommand: Command = {
   data: new SlashCommandBuilder()
@@ -22,11 +23,23 @@ const ImportCommand: Command = {
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
+    if (process.env.AUTHOR_ID) {
+      if (interaction.user.id !== process.env.AUTHOR_ID) {
+        interaction.reply({
+          content: i18next.t("developer-only", { lng: interaction.locale }),
+          flags: [MessageFlags.Ephemeral],
+        })
+      };
+    }
+
     if (interaction.options.getSubcommand() === "mongodb") {
       const file = interaction.options.getAttachment("file", true);
 
       if (!file.contentType?.startsWith("application/json")) {
-        interaction.reply("Invalid file type. Please upload a JSON file.");
+        interaction.reply({
+          content: i18next.t("command.import.reply.invalid_file_type", { lng: interaction.locale }),
+          flags: [MessageFlags.Ephemeral],
+        })
         return;
       }
 
@@ -54,28 +67,32 @@ const ImportCommand: Command = {
       const parsedMembers = mongoSchema.safeParse(membersJSON);
 
       if (!parsedMembers.success) {
-        interaction.reply({ content: "Invalid JSON format. Use only with data exported from MongoDB.", flags: [MessageFlags.Ephemeral] });
+        interaction.reply({
+          content: i18next.t("command.import.reply.invalid_json_format", { lng: interaction.locale }),
+          flags: [MessageFlags.Ephemeral],
+        })
         return;
       }
-      await interaction.reply({ content: "Importing data...", flags: [MessageFlags.Ephemeral] });
 
       if (parsedMembers.data) {
-        const text = [
-          `About to import **${parsedMembers.data.length} members** to guild ${interaction.guild?.name}.`,
-          `Are you sure you want to continue?`,
-        ].join("\n");
+        const text = i18next.t("command.import.reply.confirmation", {
+          amount: parsedMembers.data.length,
+          guild: interaction.guild?.name,
+          lng: interaction.locale,
+        });
 
         const actionRow = new ActionRowBuilder<ButtonBuilder>()
 
         const confirmButton = new ButtonBuilder()
-          .setLabel("Confirm")
+          .setLabel(i18next.t("command.import.reply.confirm", { lng: interaction.locale }))
           .setStyle(ButtonStyle.Danger)
           .setCustomId("confirm");
         actionRow.addComponents(confirmButton);
 
-        const response = await interaction.editReply({
+        const response = await interaction.reply({
           content: text,
           components: [actionRow],
+          flags: [MessageFlags.Ephemeral],
         });
 
         try {
@@ -85,6 +102,11 @@ const ImportCommand: Command = {
           })
 
           if (confirmation.customId === "confirm") {
+            confirmation.reply({
+              content: i18next.t("command.import.reply.importing_data", { lng: interaction.locale }),
+              flags: [MessageFlags.Ephemeral],
+            });
+
             for (const member of parsedMembers.data) {
               try {
                 await bot.drizzle
@@ -100,15 +122,26 @@ const ImportCommand: Command = {
                     set: { exp: member.exp, balance: member.coins },
                   })
               } catch (error) {
-                confirmation.reply({ content: `Error importing member ${member.memberId}: ${error}`, flags: [MessageFlags.Ephemeral] });
+                confirmation.editReply({
+                  content: i18next.t("command.import.reply.error_importing_member", {
+                    memberId: member.memberId,
+                    error,
+                    lng: interaction.locale,
+                  }),
+                });
                 return;
               }
             }
           }
 
-          confirmation.reply({ content: "Imported data from MongoDB.", flags: [MessageFlags.Ephemeral] });
+          confirmation.editReply({
+            content: i18next.t("command.import.reply.import_finished", { lng: interaction.locale }),
+          })
         } catch {
-          interaction.editReply({ content: "Import cancelled.", components: [] });
+          interaction.editReply({
+            content: i18next.t("command.import.reply.cancelled", { lng: interaction.locale }),
+            components: [],
+          })
         }
       }
     }
