@@ -11,7 +11,7 @@ const MessageCreate: Event = {
   async execute(message: Message) {
     if (
       message.system || message.author.bot ||
-      !message.member || !message.guild
+      !message.member || !message.guild || message.interactionMetadata
     ) return;
 
     const [config] = await bot.drizzle
