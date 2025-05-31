@@ -2,7 +2,7 @@
 
 Luna is a general-purpose Discord bot built using Node.js and the Discord.js library.
 
-**[https://github.com/nikkoxd/stella](Stella) feature parity TODO:**
+**[Stella](https://github.com/nikkoxd/stella) feature parity TODO:**
 - [x] Command handler
 - [x] Event handler
 - [x] Join announcements
