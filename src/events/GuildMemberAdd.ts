@@ -28,18 +28,21 @@ const GuildMemberAdd: Event = {
     let message: string;
     if (config?.joinMessage) {
       message = config.joinMessage
+        .replace("{{displayname}}", member.user.displayName)
         .replace("{{username}}", member.user.username)
         .replace("{{mention}}", `<@${member.user.id}>`)
         .replace("{{guild}}", member.guild.name)
     } else {
       const locale = await getGuildLocale(member.guild.id);
       if (!locale) return;
+
       message = i18next.t("greeting", {
         guild: member.guild.name,
         memberId: member.user.id,
         lng: locale,
       })
     }
+
     member.guild.systemChannel.send(message);
   }
 }
