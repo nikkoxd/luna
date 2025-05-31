@@ -2,6 +2,21 @@
 
 Luna is a general-purpose Discord bot built using Node.js and the Discord.js library.
 
+**[https://github.com/nikkoxd/stella](Stella) feature parity TODO:**
+- [x] Command handler
+- [x] Event handler
+- [x] Join announcements
+- [ ] Leveling system
+  - [x] Experience and level calculation
+  - [ ] Role rewards
+  - [ ] Level cards
+- [ ] Currency system
+  - [x] Balance calculation
+  - [ ] Role shop
+  - [ ] Private rooms
+- [ ] Leaderboards
+- [ ] Custom messages
+
 ## Prerequisites
 
 To run Luna locally, you will need the following:
