@@ -1,4 +1,4 @@
-import { Events, Message } from "discord.js";
+import { Collection, Events, Message } from "discord.js";
 import { Event } from "../base/Event";
 import { bot } from "..";
 import { guilds, members } from "../schema";
@@ -10,11 +10,26 @@ export default class MessageCreateEvent extends Event<Events.MessageCreate> {
     super(Events.MessageCreate, false);
   }
 
+  cooldown = 5_000;
+  timestamps = new Collection<string, number>();
+
   async execute(message: Message) {
     if (
       message.system || message.author.bot ||
       !message.member || !message.guild || message.interactionMetadata
     ) return;
+
+    const now = Date.now();
+    const timestamp = this.timestamps.get(message.member.id);
+    if (timestamp) {
+      const expirationTime = timestamp + this.cooldown;
+
+      if (now < expirationTime) {
+        return;
+      }
+    }
+    this.timestamps.set(message.member.id, now);
+    setTimeout(() => this.timestamps.delete(message.member!.id), this.cooldown)
 
     const [config] = await bot.drizzle
       .select({
