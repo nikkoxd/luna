@@ -140,14 +140,12 @@ export default class ImportCommand extends Command {
   }
 
   async execute(interaction: ChatInputCommandInteraction) {
-    if (process.env.AUTHOR_ID) {
-      if (interaction.user.id !== process.env.AUTHOR_ID) {
-        interaction.reply({
-          content: i18next.t("developer-only", { lng: interaction.locale }),
-          flags: [MessageFlags.Ephemeral],
-        })
-      };
-    }
+    if (interaction.user.id !== bot.client.application?.owner?.id) {
+      interaction.reply({
+        content: i18next.t("developer-only", { lng: interaction.locale }),
+        flags: [MessageFlags.Ephemeral],
+      })
+    };
 
     if (interaction.options.getSubcommand() === "mongodb") {
       this.confirm(interaction);
