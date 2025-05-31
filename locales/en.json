@@ -8,7 +8,9 @@
       "reply": {
         "only_on_servers": "This command can only be used in a server.",
         "success": "Successfully updated `{{key}}` to `{{value}}`.",
-        "error": "Error while updating configuration: \n```{{error}}```"
+        "error": "Error while updating configuration: \n```{{error}}```",
+        "not_found": "Server configuration not found.",
+        "view": "Current server config:\n```json\n{{config}}\n```"
       }
     },
     "import": {

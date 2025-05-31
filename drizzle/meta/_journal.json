@@ -22,6 +22,13 @@
       "when": 1748692221580,
       "tag": "0002_heavy_freak",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1748695654027,
+      "tag": "0003_robust_warbound",
+      "breakpoints": true
     }
   ]
 }

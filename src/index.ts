@@ -10,7 +10,8 @@ export const bot = new Bot(
   new Client({
     intents: [
       GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMembers
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.GuildMessages
     ]
   }),
   drizzle({

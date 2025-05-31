@@ -6,6 +6,10 @@ export const guilds = pgTable("guilds", {
   locale: char({ length: 2 }).default("en").notNull(),
   announceJoins: boolean().default(true).notNull(),
   joinMessage: text().default("").notNull(),
+  minExp: integer().default(15).notNull(),
+  maxExp: integer().default(35).notNull(),
+  minCoins: integer().default(50).notNull(),
+  maxCoins: integer().default(85).notNull(),
 });
 
 export const guildsRelations = relations(guilds, ({ many }) => ({
@@ -15,6 +19,7 @@ export const guildsRelations = relations(guilds, ({ many }) => ({
 export const members = pgTable("members", {
   id: bigint({ mode: "number" }).notNull(),
   guildId: bigint({ mode: "number" }).notNull(),
+  level: integer().default(0).notNull(),
   exp: integer().default(0).notNull(),
   balance: integer().default(0).notNull(),
 }, (table) => [
