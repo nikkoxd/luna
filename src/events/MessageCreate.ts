@@ -1,13 +1,15 @@
 import { Events, Message } from "discord.js";
-import { Event } from "../types/Event";
+import { Event } from "../base/Event";
 import { bot } from "..";
 import { guilds, members } from "../schema";
 import { eq, sql } from "drizzle-orm";
 import { randomInt } from "crypto";
 
-const MessageCreate: Event = {
-  name: Events.MessageCreate,
-  once: false,
+export default class MessageCreateEvent extends Event<Events.MessageCreate> {
+  constructor() {
+    super(Events.MessageCreate, false);
+  }
+
   async execute(message: Message) {
     if (
       message.system || message.author.bot ||
@@ -44,5 +46,3 @@ const MessageCreate: Event = {
     }
   }
 }
-
-export default MessageCreate;

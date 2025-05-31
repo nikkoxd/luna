@@ -1,12 +1,14 @@
 import { eq } from "drizzle-orm";
 import { bot } from "..";
 import { guilds } from "../schema";
-import { Event } from "../types/Event";
+import { Event } from "../base/Event";
 import { Events, Guild } from "discord.js";
 
-const GuildCreate: Event = {
-  name: Events.GuildCreate,
-  once: false,
+export default class GuildCreateEvent extends Event<Events.GuildCreate> {
+  constructor() {
+    super(Events.GuildCreate, false);
+  };
+
   async execute(guild: Guild) {
     bot.logger.info(`Joined guild ${guild.id}.`)
 
@@ -22,6 +24,4 @@ const GuildCreate: Event = {
       bot.logger.error(`Error while configuring guild: ${error}`);
     });
   }
-}
-
-export default GuildCreate;
+};

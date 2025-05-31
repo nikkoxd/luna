@@ -1,14 +1,16 @@
 import { Events, GuildFeature, GuildMember } from "discord.js";
-import { Event } from "../types/Event";
+import { Event } from "../base/Event";
 import i18next from "i18next";
 import { getGuildLocale } from "../utils";
 import { bot } from "..";
 import { guilds, members } from "../schema";
 import { eq } from "drizzle-orm";
 
-const GuildMemberAdd: Event = {
-  name: Events.GuildMemberAdd,
-  once: false,
+export default class GuildMemberAddEvent extends Event<Events.GuildMemberAdd> {
+  constructor() {
+    super(Events.GuildMemberAdd, false);
+  };
+
   async execute(member: GuildMember) {
     await bot.drizzle.insert(members).values({
       id: Number(member.user.id),
@@ -45,6 +47,4 @@ const GuildMemberAdd: Event = {
 
     member.guild.systemChannel.send(message);
   }
-}
-
-export default GuildMemberAdd;
+};

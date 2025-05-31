@@ -1,13 +1,13 @@
 import { ApplicationCommandDataResolvable, Client, Collection, Events, Interaction, REST, Routes } from "discord.js";
-import { Command } from "./types/Command";
 import path from "path";
 import { readdirSync } from "fs";
-import { Event } from "./types/Event";
+import { Event } from "./base/Event";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import i18next, { InitOptions } from "i18next";
 import Backend from "i18next-fs-backend";
 import { Logger } from "winston";
+import { Command } from "./base/Command";
 
 export class Bot {
   public commands = new Array<ApplicationCommandDataResolvable>();
@@ -40,12 +40,18 @@ export class Bot {
     for (const file of eventFiles) {
       const filePath = path.join(eventsPath, file);
       const event = await import(filePath);
-      const eventClass: Event = event.default;
+      const eventClass = event.default;
 
-      if (eventClass.once) {
-        this.client.once(eventClass.name, (...args) => eventClass.execute(...args));
+      if (!eventClass || !(eventClass.prototype instanceof Event)) {
+        this.logger.warn(`Skipping invalid event file: ${file}`)
+        continue;
+      }
+
+      const eventInstance: Event<any> = new eventClass();
+      if (eventInstance.once) {
+        this.client.once(eventInstance.name, (...args) => eventInstance.execute(...args));
       } else {
-        this.client.on(eventClass.name, (...args) => eventClass.execute(...args));
+        this.client.on(eventInstance.name, (...args) => eventInstance.execute(...args));
       }
     }
   }
@@ -59,10 +65,16 @@ export class Bot {
     for (const file of commandFiles) {
       const filePath = path.join(commandsPath, file);
       const command = await import(filePath);
-      const commandClass: Command = command.default;
+      const commandClass = command.default;
 
-      this.commands.push(commandClass.data);
-      this.commandsCollection.set(commandClass.data.name, commandClass);
+      if (!commandClass || !(commandClass.prototype instanceof Command)) {
+        this.logger.warn(`Skipping invalid command file: ${file}`)
+        continue;
+      }
+
+      const commandInstance: Command = new commandClass();
+      this.commands.push(commandInstance.data);
+      this.commandsCollection.set(commandInstance.data.name, commandInstance);
     }
 
     try {

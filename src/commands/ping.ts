@@ -1,12 +1,15 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command } from "../types/Command";
+import { Command } from "../base/Command";
 import i18next from "i18next";
 import { bot } from "..";
 
-const PingCommand: Command = {
-  data: new SlashCommandBuilder()
-    .setName("ping")
-    .setDescription("Pong!"),
+export default class PingCommand extends Command {
+  constructor() {
+    super(new SlashCommandBuilder()
+      .setName("ping")
+      .setDescription("Pong!"),
+    )
+  }
 
   async execute(interaction: ChatInputCommandInteraction) {
     const ping = bot.client.ws.ping;
@@ -15,6 +18,4 @@ const PingCommand: Command = {
       lng: interaction.locale,
     }));
   }
-};
-
-export default PingCommand;
+}
