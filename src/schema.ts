@@ -1,10 +1,11 @@
 import { relations } from "drizzle-orm";
-import { bigint, boolean, char, integer, pgTable, primaryKey } from "drizzle-orm/pg-core";
+import { bigint, boolean, char, integer, pgTable, primaryKey, text } from "drizzle-orm/pg-core";
 
 export const guilds = pgTable("guilds", {
   id: bigint({ mode: "number" }).primaryKey(),
   locale: char({ length: 2 }).default("en").notNull(),
   announceJoins: boolean().default(true).notNull(),
+  joinMessage: text().default("").notNull(),
 });
 
 export const guildsRelations = relations(guilds, ({ many }) => ({

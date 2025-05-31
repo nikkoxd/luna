@@ -15,6 +15,13 @@
       "when": 1748036424370,
       "tag": "0001_vengeful_azazel",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748692221580,
+      "tag": "0002_heavy_freak",
+      "breakpoints": true
     }
   ]
 }

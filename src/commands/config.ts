@@ -17,6 +17,7 @@ const ConfigCommand: Command = {
         .addChoices(
           { name: "Locale - en/ru", value: "locale" },
           { name: "Announce Joins - true/false", value: "announceJoins" },
+          { name: "Join Message - string", value: "joinMessage" },
         )
         .setRequired(true)
     )

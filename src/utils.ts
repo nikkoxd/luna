@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { bot } from ".";
 import { guilds } from "./schema";
 
-export async function getGuildLocale(guildId: string) {
+export async function getGuildLocale(guildId: string): Promise<string | undefined> {
   const config = await bot.drizzle
     .select({ locale: guilds.locale })
     .from(guilds)
