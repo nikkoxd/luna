@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, MessageFlags, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import { Command } from "../types/Command";
 import { bot } from "..";
 import { guilds } from "../schema";
@@ -45,11 +45,23 @@ const ConfigCommand: Command = {
       .where(eq(guilds.id, Number(interaction.guildId)))
       .then(() => {
         bot.logger.info(`Updated ${key} to ${value} in guild ${interaction.guildId}.`);
-        interaction.reply(i18next.t("command.config.reply.success", { key, value, lng: locale }));
+        interaction.reply({
+          content: i18next.t(
+            "command.config.reply.success",
+            { key, value, lng: locale }
+          ),
+          flags: [MessageFlags.Ephemeral]
+        });
       })
       .catch((error: Error) => {
         bot.logger.error(`Error while updating ${key} to ${value} in guild ${interaction.guildId}: ${error}`);
-        interaction.reply(i18next.t("command.config.reply.error", { error, key, value, lng: locale }));
+        interaction.reply({
+          content: i18next.t(
+            "command.config.reply.error",
+            { error, key, value, lng: locale }
+          ),
+          flags: [MessageFlags.Ephemeral]
+        });
       })
   }
 }
