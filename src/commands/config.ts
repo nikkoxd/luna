@@ -115,8 +115,12 @@ export default class ConfigCommand extends Command {
   async execute(interaction: ChatInputCommandInteraction) {
     const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
-      case "view": this.view(interaction)
-      case "edit": this.edit(interaction)
+      case "view": 
+        this.view(interaction);
+        return;
+      case "edit": 
+        this.edit(interaction);
+        return;
     }
   }
 }
