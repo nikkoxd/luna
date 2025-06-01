@@ -62,6 +62,7 @@ export const roles = pgTable("roles", {
 
   isPurchaseable: boolean().default(false).notNull(),
   price: integer().default(0).notNull(),
+  level: integer().default(0).notNull(),
 
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().defaultNow(),
