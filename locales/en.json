@@ -24,6 +24,14 @@
         "import_finished": ":white_check_mark: Imported data from MongoDB.",
         "cancelled": "Import cancelled."
       }
+    },
+    "role": {
+      "reply": {
+        "added": "Role added.",
+        "add_error": "Error adding role.",
+        "removal_error": "Error removing role.",
+        "removed": "Role removed."
+      }
     }
   },
   "developer-only": "This command can only be run by the bot's developer."
