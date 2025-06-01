@@ -3,7 +3,7 @@ import { Event } from "../base/Event";
 import i18next from "i18next";
 import { getGuildLocale } from "../utils";
 import { bot } from "..";
-import { guilds, members } from "../schema";
+import { guilds, members, users } from "../schema";
 import { eq } from "drizzle-orm";
 
 export default class GuildMemberAddEvent extends Event<Events.GuildMemberAdd> {
@@ -12,10 +12,16 @@ export default class GuildMemberAddEvent extends Event<Events.GuildMemberAdd> {
   };
 
   async execute(member: GuildMember) {
-    await bot.drizzle.insert(members).values({
-      id: Number(member.user.id),
-      guildId: Number(member.guild.id),
-    }).onConflictDoNothing();
+    await bot.drizzle.transaction(async (tx) => {
+      await tx.insert(users).values({
+        id: Number(member.user.id),
+      }).onConflictDoNothing();
+
+      await tx.insert(members).values({
+        id: Number(member.user.id),
+        guildId: Number(member.guild.id),
+      }).onConflictDoNothing();
+    });
 
     if (
       member.guild.features.includes(GuildFeature.MemberVerificationGateEnabled) ||

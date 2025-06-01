@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, MessageFlags, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import { Command } from "../base/Command";
 import { bot } from "..";
-import { members } from "../schema";
+import { members, users } from "../schema";
 import { z } from "zod";
 import i18next from "i18next";
 
@@ -102,18 +102,21 @@ export default class ImportCommand extends Command {
 
           for (const member of parsedMembers.data) {
             try {
-              await bot.drizzle
-                .insert(members)
-                .values({
+              await bot.drizzle.transaction(async (tx) => {
+                await tx.insert(users).values({
+                  id: Number(member.memberId),
+                }).onConflictDoNothing();
+
+                await tx.insert(members).values({
                   id: Number(member.memberId),
                   guildId: Number(interaction.guildId),
                   exp: member.exp,
                   balance: member.coins,
-                })
-                .onConflictDoUpdate({
+                }).onConflictDoUpdate({
                   target: [members.id, members.guildId],
                   set: { exp: member.exp, balance: member.coins },
                 })
+              });
             } catch (error) {
               confirmation.editReply({
                 content: i18next.t("command.import.reply.error_importing_member", {
