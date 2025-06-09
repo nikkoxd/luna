@@ -42,7 +42,7 @@ jobs:
           fail_on_empty: true
           sort_keys: true
 
-      - name: Publish .env and compose.yaml 
+      - name: Deploy .env and compose.yaml 
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -51,13 +51,14 @@ jobs:
           source: ".env,compose.yaml"
           target: "/root/luna"
 
-      - name: Pull image
+      - name: Deploy image
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
             docker pull ghcr.io/${{ github.repository }}:latest
             cd /root/luna
             docker compose up -d
