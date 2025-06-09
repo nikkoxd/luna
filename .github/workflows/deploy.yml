@@ -17,6 +17,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Make .env file
+        uses: SpicyPizza/create-envfile@v2
+        with:
+          envkey_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          envkey_POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          envkey_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          envkey_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          envkey_POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -24,8 +33,8 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
 
-  pull-image:
-    name: Pull image
+  pull-run-image:
+    name: Pull and run image
     runs-on: ubuntu-latest
     needs: deploy-to-registry
     steps:
@@ -37,3 +46,4 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             docker pull ghcr.io/${{ github.repository }}:latest
+            docker run ghcr.io/${{ github.repository }}:latest
