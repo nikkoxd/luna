@@ -1,11 +1,10 @@
 services:
   bot:
-    build:
-      context: .
+    image: ghcr.io/nikko/luna:latest
+    env_file: ".env"
     environment:
       NODE_ENV: production
     restart: on-failure:5
-    env_file: ".env"
     ports:
       - 3000:3000
     extra_hosts:

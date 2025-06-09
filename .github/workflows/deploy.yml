@@ -17,6 +17,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
+
+  pull-run-image:
+    name: Pull and run image
+    runs-on: ubuntu-latest
+    needs: deploy-to-registry
+    steps:
       - name: Make .env file
         uses: SpicyPizza/create-envfile@v2
         with:
@@ -30,18 +42,15 @@ jobs:
           fail_on_empty: true
           sort_keys: true
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      - name: Publish .env and compose.yaml 
+        uses: appleboy/scp-action@master
         with:
-          context: .
-          push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: ".env,compose.yaml"
+          target: "/root/luna"
 
-  pull-run-image:
-    name: Pull and run image
-    runs-on: ubuntu-latest
-    needs: deploy-to-registry
-    steps:
       - name: Pull image
         uses: appleboy/ssh-action@master
         with:
@@ -49,6 +58,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
             docker pull ghcr.io/${{ github.repository }}:latest
-            docker run ghcr.io/${{ github.repository }}:latest
+            cd /root/luna
+            docker compose up -d
