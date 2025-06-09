@@ -1,0 +1,39 @@
+name: Deploy to vps
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy-to-registry:
+    name: Deploy to registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
+
+  # pull-image:
+  #   name: Pull image
+  #   runs-on: ubuntu-latest
+  #   needs: deploy-to-registry
+  #   steps:
+  #     - name: Pull image
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.SSH_HOST }}
+  #         username: ${{ secrets.SSH_USER }}
+  #         key: ${{ secrets.SSH_KEY }}
+  #         port: ${{ secrets.SSH_PORT }}
+  #         script: docker pull ghcr.io/${{ github.repository }}:latest
