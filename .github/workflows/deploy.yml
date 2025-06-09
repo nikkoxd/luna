@@ -29,6 +29,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy-to-registry
     steps:
+      - uses: actions/checkout@v4
+
       - name: Make .env file
         uses: SpicyPizza/create-envfile@v2
         with:
