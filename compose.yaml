@@ -1,6 +1,6 @@
 services:
   bot:
-    image: ghcr.io/nikko/luna:latest
+    image: ghcr.io/nikkoxd/luna:latest
     env_file: ".env"
     environment:
       NODE_ENV: production
