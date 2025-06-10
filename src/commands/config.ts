@@ -28,6 +28,8 @@ export default class ConfigCommand extends Command {
                 { name: "Locale - en/ru", value: "locale" },
                 { name: "Announce Joins - true/false", value: "announceJoins" },
                 { name: "Join Message - string", value: "joinMessage" },
+                { name: "Log channel - id/string", value: "logChannelId" },
+
                 { name: "Min Exp - number", value: "minExp" },
                 { name: "Max Exp - number", value: "maxExp" },
                 { name: "Min Coins - number", value: "minCoins" },
