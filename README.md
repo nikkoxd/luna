@@ -54,6 +54,9 @@ POSTGRES_HOST=<your-db-hostname>
 POSTGRES_USER=<your-db-username>
 POSTGRES_PASSWORD=<your-db-password>
 POSTGRES_DB=<your-db-name>
+
+# this will likely get removed
+LOKI_URL=<your-loki-url>
 ```
 
 ### 4. Running the bot
