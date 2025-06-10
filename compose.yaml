@@ -4,6 +4,10 @@ services:
     env_file: ".env"
     environment:
       NODE_ENV: production
+    logging:
+      driver: loki
+      options:
+        loki-url: "${LOKI_URL}"
     restart: on-failure:5
     ports:
       - 3000:3000

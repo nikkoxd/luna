@@ -35,6 +35,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v2
         with:
           envkey_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          envkey_LOKI_URL: ${{ secrets.LOKI_URL }}
           envkey_POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
           envkey_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           envkey_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
