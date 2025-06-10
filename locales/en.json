@@ -55,6 +55,11 @@
         "not_sendable": "Current channel is not sendable.",
         "sent": "Message sent."
       }
+    },
+    "balance": {
+      "reply": {
+        "balance": "Your balance: {{balance}} coins."
+      }
     }
   },
   "developer-only": "This command can only be run by the bot's developer.",
