@@ -1,4 +1,4 @@
-import { ApplicationCommandDataResolvable, Client, Collection, Events, Interaction, REST, Routes } from "discord.js";
+import { ActivityType, ApplicationCommandDataResolvable, Client, Collection, Events, Interaction, REST, Routes } from "discord.js";
 import path from "path";
 import { readdirSync } from "fs";
 import { Event } from "./base/Event";
@@ -18,6 +18,7 @@ export class Bot {
 
     this.client.on(Events.ClientReady, readyClient => {
       this.logger.info(`Ready! Logged in as ${readyClient.user.tag}`)
+      readyClient.user?.setActivity("dsc.gg/starrysky", { type: ActivityType.Watching, url: "https://dsc.gg/starrysky" });
 
       i18next
         .use(Backend)
