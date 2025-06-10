@@ -8,8 +8,8 @@ import { and, eq } from "drizzle-orm";
 export default class RoleCommand extends Command {
   constructor() {
     super(new SlashCommandBuilder()
-      .setName("role")
-      .setDescription("Commands related to roles")
+      .setName("reward")
+      .setDescription("Commands related to rewards")
       .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
       .addSubcommand(subcommand => subcommand
         .setName("add")
@@ -41,9 +41,11 @@ export default class RoleCommand extends Command {
     const role = interaction.options.getRole("role", true);
     const level = interaction.options.getNumber("level", true);
 
+    if (!interaction.guildId) return;
+
     const result = await bot.drizzle.insert(roles).values({
-      id: Number(role.id),
-      guildId: Number(interaction.guildId),
+      id: BigInt(role.id),
+      guildId: BigInt(interaction.guildId),
       level: level,
     }).onConflictDoNothing().returning();
 
@@ -64,9 +66,11 @@ export default class RoleCommand extends Command {
   async remove(interaction: ChatInputCommandInteraction) {
     const role = interaction.options.getRole("role", true);
 
+    if (!interaction.guildId) return;
+
     const result = await bot.drizzle.delete(roles).where(and(
-      eq(roles.id, Number(role.id)),
-      eq(roles.guildId, Number(interaction.guildId))
+      eq(roles.id, BigInt(role.id)),
+      eq(roles.guildId, BigInt(interaction.guildId))
     )).returning();
 
     if (result.length === 0) {
@@ -86,12 +90,14 @@ export default class RoleCommand extends Command {
   async execute(interaction: ChatInputCommandInteraction) {
     const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
-      case "add":
+      case "add": {
         this.add(interaction);
-        return;
-      case "remove":
+        break;
+      }
+      case "remove": {
         this.remove(interaction);
-        return;
+        break;
+      }
     }
   }
 }

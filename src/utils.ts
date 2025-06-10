@@ -6,7 +6,7 @@ export async function getGuildLocale(guildId: string): Promise<string> {
   const [config] = await bot.drizzle
     .select({ locale: guilds.locale })
     .from(guilds)
-    .where(eq(guilds.id, Number(guildId)));
+    .where(eq(guilds.id, BigInt(guildId)));
 
   if (!config.locale) return "en";
   return config.locale;

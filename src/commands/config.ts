@@ -46,10 +46,12 @@ export default class ConfigCommand extends Command {
   }
 
   async view(interaction: ChatInputCommandInteraction) {
+    if (!interaction.guildId) return;
+
     const [config] = await bot.drizzle
       .select()
       .from(guilds)
-      .where(eq(guilds.id, Number(interaction.guildId)));
+      .where(eq(guilds.id, BigInt(interaction.guildId)));
 
     if (!config) {
       interaction.reply({
@@ -66,7 +68,11 @@ export default class ConfigCommand extends Command {
       content: i18next.t(
         "command.config.reply.view",
         {
-          config: JSON.stringify(config, null, 2),
+          config: JSON.stringify(
+            config,
+            (_key, value) => typeof value === "bigint" ? value.toString() : value,
+            2
+          ),
           lng: interaction.locale,
           interpolation: { escapeValue: false },
         }
@@ -89,7 +95,7 @@ export default class ConfigCommand extends Command {
     bot.drizzle
       .update(guilds)
       .set({ [key]: value })
-      .where(eq(guilds.id, Number(interaction.guildId)))
+      .where(eq(guilds.id, BigInt(interaction.guildId)))
       .then(() => {
         bot.logger.info(`Updated ${key} to ${value} in guild ${interaction.guildId}.`);
         interaction.reply({
@@ -115,12 +121,14 @@ export default class ConfigCommand extends Command {
   async execute(interaction: ChatInputCommandInteraction) {
     const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
-      case "view": 
+      case "view": {
         this.view(interaction);
-        return;
-      case "edit": 
+        break;
+      }
+      case "edit": {
         this.edit(interaction);
-        return;
+        break;
+      }
     }
   }
 }

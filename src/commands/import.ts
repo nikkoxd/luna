@@ -26,6 +26,7 @@ export default class ImportCommand extends Command {
   }
 
   async confirm(interaction: ChatInputCommandInteraction) {
+    if (!interaction.guildId) return;
     const file = interaction.options.getAttachment("file", true);
 
     if (!file.contentType?.startsWith("application/json")) {
@@ -104,12 +105,12 @@ export default class ImportCommand extends Command {
             try {
               await bot.drizzle.transaction(async (tx) => {
                 await tx.insert(users).values({
-                  id: Number(member.memberId),
+                  id: BigInt(member.memberId),
                 }).onConflictDoNothing();
 
                 await tx.insert(members).values({
-                  id: Number(member.memberId),
-                  guildId: Number(interaction.guildId),
+                  id: BigInt(member.memberId),
+                  guildId: BigInt(interaction.guildId!),
                   exp: member.exp,
                   balance: member.coins,
                 }).onConflictDoUpdate({
@@ -150,8 +151,13 @@ export default class ImportCommand extends Command {
       })
     };
 
-    if (interaction.options.getSubcommand() === "mongodb") {
-      this.confirm(interaction);
+    const subcommand = interaction.options.getSubcommand();
+
+    switch (subcommand) {
+      case "mongodb": {
+        this.confirm(interaction);
+        break;
+      }
     }
   }
 }

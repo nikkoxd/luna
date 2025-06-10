@@ -1,10 +1,10 @@
-import { SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
 
 export abstract class Command {
   data: SlashCommandBuilder
     | SlashCommandOptionsOnlyBuilder
     | SlashCommandSubcommandsOnlyBuilder;
-  abstract execute(interaction: any): Promise<void>;
+  abstract execute(interaction: ChatInputCommandInteraction): Promise<void>;
 
   protected constructor(data: SlashCommandBuilder
     | SlashCommandOptionsOnlyBuilder

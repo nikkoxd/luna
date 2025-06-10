@@ -32,7 +32,38 @@
         "removal_error": "Error removing role.",
         "removed": "Role removed."
       }
+    },
+    "exp": {
+      "reply": {
+        "set_error": "Error while setting experience.",
+        "success": "Set <@{{memberId}}>'s exp to `{{exp}}`, their level is now `{{level}}`"
+      }
+    },
+    "shop": {
+      "reply": {
+        "role_exists": "The role you are trying to add already exists in the shop.",
+        "added": "Role added.",
+        "no_items": "No items in the shop.",
+        "items": "Shop items",
+        "role_not_found": "Role not found.",
+        "removed": "Role removed."
+      },
+      "initial": {
+        "title": "Shop",
+        "description": "Here you can buy roles for coins.\nTo view your current balance, do `/balance`",
+        "open": "Open shop",
+        "not_sendable": "Current channel is not sendable.",
+        "sent": "Message sent."
+      }
     }
   },
-  "developer-only": "This command can only be run by the bot's developer."
+  "developer-only": "This command can only be run by the bot's developer.",
+  "internal_error": "There was an internal error during this interaction.",
+  "shop": {
+    "title": "Shop",
+    "next": "Next page",
+    "prev": "Previous page",
+    "select_role": "Select role",
+    "cancelled": "Shop interaction cancelled."
+  }
 }

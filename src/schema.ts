@@ -2,12 +2,12 @@ import { relations } from "drizzle-orm";
 import { bigint, boolean, char, integer, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 
 export const guilds = pgTable("guilds", {
-  id: bigint({ mode: "number" }).primaryKey(),
+  id: bigint({ mode: "bigint" }).primaryKey(),
 
   locale: char({ length: 2 }).default("en").notNull(),
   announceJoins: boolean().default(true).notNull(),
   joinMessage: text().default("").notNull(),
-  logChannelId: bigint({ mode: "number" }),
+  logChannelId: bigint({ mode: "bigint" }),
 
   minExp: integer().default(15).notNull(),
   maxExp: integer().default(35).notNull(),
@@ -25,7 +25,7 @@ export const guildsRelations = relations(guilds, ({ many }) => ({
 }));
 
 export const users = pgTable("users", {
-  id: bigint({ mode: "number" }).primaryKey(),
+  id: bigint({ mode: "bigint" }).primaryKey(),
 
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().defaultNow(),
@@ -36,8 +36,8 @@ export const userRelations = relations(users, ({ many }) => ({
 }));
 
 export const members = pgTable("members", {
-  id: bigint({ mode: "number" }).notNull().references(() => users.id),
-  guildId: bigint({ mode: "number" }).notNull().references(() => guilds.id),
+  id: bigint({ mode: "bigint" }).notNull().references(() => users.id),
+  guildId: bigint({ mode: "bigint" }).notNull().references(() => guilds.id),
 
   level: integer().default(0).notNull(),
   exp: integer().default(0).notNull(),
@@ -57,8 +57,8 @@ export const membersRelations = relations(members, ({ one }) => ({
 }));
 
 export const roles = pgTable("roles", {
-  id: bigint({ mode: "number" }).primaryKey(),
-  guildId: bigint({ mode: "number" }).notNull().references(() => guilds.id),
+  id: bigint({ mode: "bigint" }).primaryKey(),
+  guildId: bigint({ mode: "bigint" }).notNull().references(() => guilds.id),
 
   isPurchaseable: boolean().default(false).notNull(),
   price: integer().default(0).notNull(),
@@ -73,9 +73,9 @@ export const roleRelations = relations(roles, ({ many }) => ({
 }));
 
 export const userRoles = pgTable("user_roles", {
-  userId: bigint({ mode: "number" }).notNull().references(() => users.id),
-  guildId: bigint({ mode: "number" }).notNull().references(() => guilds.id),
-  roleId: bigint({ mode: "number" }).notNull().references(() => roles.id),
+  userId: bigint({ mode: "bigint" }).notNull().references(() => users.id),
+  guildId: bigint({ mode: "bigint" }).notNull().references(() => guilds.id),
+  roleId: bigint({ mode: "bigint" }).notNull().references(() => roles.id),
 
   createdAt: timestamp().defaultNow(),
 }, (table) => [

@@ -14,12 +14,12 @@ export default class GuildMemberAddEvent extends Event<Events.GuildMemberAdd> {
   async execute(member: GuildMember) {
     await bot.drizzle.transaction(async (tx) => {
       await tx.insert(users).values({
-        id: Number(member.user.id),
+        id: BigInt(member.user.id),
       }).onConflictDoNothing();
 
       await tx.insert(members).values({
-        id: Number(member.user.id),
-        guildId: Number(member.guild.id),
+        id: BigInt(member.user.id),
+        guildId: BigInt(member.guild.id),
       }).onConflictDoNothing();
     });
 
@@ -31,7 +31,7 @@ export default class GuildMemberAddEvent extends Event<Events.GuildMemberAdd> {
     const [config] = await bot.drizzle
       .select({ joinMessage: guilds.joinMessage })
       .from(guilds)
-      .where(eq(guilds.id, Number(member.guild.id)))
+      .where(eq(guilds.id, BigInt(member.guild.id)))
 
     let message: string;
     if (config?.joinMessage) {
