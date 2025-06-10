@@ -61,7 +61,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            echo ${{secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }}
             docker pull ghcr.io/${{ github.repository }}:latest
             cd /root/luna
             docker compose up -d
