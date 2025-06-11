@@ -54,6 +54,8 @@ POSTGRES_HOST=<your-db-hostname>
 POSTGRES_USER=<your-db-username>
 POSTGRES_PASSWORD=<your-db-password>
 POSTGRES_DB=<your-db-name>
+# required if you've set up a team application
+OWNER_ID=<bot-owner-id>
 
 # this will likely get removed
 LOKI_URL=<your-loki-url>

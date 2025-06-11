@@ -144,7 +144,8 @@ export default class ImportCommand extends Command {
   }
 
   async execute(interaction: ChatInputCommandInteraction) {
-    if (interaction.user.id !== bot.client.application?.owner?.id) {
+    const ownerId = process.env.OWNER_ID || bot.client.application?.owner?.id;
+    if (interaction.user.id !== ownerId) {
       interaction.reply({
         content: i18next.t("developer-only", { lng: interaction.locale }),
         flags: [MessageFlags.Ephemeral],
