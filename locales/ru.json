@@ -70,5 +70,10 @@
     "prev": "Пред. стр.",
     "select_role": "Выбери роль",
     "cancelled": "Взаимодействие с магазином отменено."
+  },
+  "event": {
+    "message_create": {
+      "level_up": "<@{{userId}}> достиг {{level}} уровня!"
+    }
   }
 }

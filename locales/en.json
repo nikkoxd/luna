@@ -70,5 +70,10 @@
     "prev": "Previous page",
     "select_role": "Select role",
     "cancelled": "Shop interaction cancelled."
+  },
+  "event": {
+    "message_create": {
+      "level_up": "<@{{userId}}>, you just leveled up to level {{level}}!"
+    }
   }
 }
