@@ -1,4 +1,18 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, Colors, ComponentType, EmbedBuilder, Events, Interaction, MessageFlags, StringSelectMenuBuilder, StringSelectMenuInteraction, StringSelectMenuOptionBuilder } from "discord.js";
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonInteraction,
+	ButtonStyle,
+	Colors,
+	ComponentType,
+	EmbedBuilder,
+	Events,
+	Interaction,
+	MessageFlags,
+	StringSelectMenuBuilder,
+	StringSelectMenuInteraction,
+	StringSelectMenuOptionBuilder,
+} from "discord.js";
 import { Event } from "../base/Event";
 import { bot } from "..";
 import { roles } from "../schema";
@@ -6,130 +20,142 @@ import { eq } from "drizzle-orm";
 import i18next from "i18next";
 
 export default class ButtonInteractionEvent extends Event<Events.InteractionCreate> {
-    constructor() {
-        super(Events.InteractionCreate);
-    }
+	constructor() {
+		super(Events.InteractionCreate);
+	}
 
-    async role(interaction: StringSelectMenuInteraction) {
-        if (
-            !interaction.guildId || !interaction.member
-        ) return;
+	async role(interaction: StringSelectMenuInteraction) {
+		if (!interaction.guildId || !interaction.member) return;
+	}
 
+	async open(interaction: ButtonInteraction) {
+		if (!interaction.guildId) return;
 
-    }
+		try {
+			const rolesList = await bot.drizzle
+				.select({ id: roles.id, price: roles.price })
+				.from(roles)
+				.where(eq(roles.guildId, BigInt(interaction.guildId)));
 
-    async open(interaction: ButtonInteraction) {
-        if (!interaction.guildId) return;
+			const embed = new EmbedBuilder()
+				.setTitle(i18next.t("shop.title", { lng: interaction.locale }))
+				.setDescription(
+					rolesList
+						.map((role) => {
+							const roleName = interaction.guild?.roles.cache.get(
+								role.id.toString()
+							)?.name;
+							return `${roleName} - ${role.price}$`;
+						})
+						.join("\n")
+				)
+				.setColor(Colors.LuminousVividPink);
 
-        try {
-            const rolesList = await bot.drizzle
-                .select({ id: roles.id, price: roles.price })
-                .from(roles)
-                .where(eq(
-                    roles.guildId,
-                    BigInt(interaction.guildId)
-                ));
+			const selectRow =
+				new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+					new StringSelectMenuBuilder()
+						.setCustomId("role")
+						.setPlaceholder(
+							i18next.t("shop.select_role", {
+								lng: interaction.locale,
+							})
+						)
+						.addOptions(
+							rolesList.map((role) => {
+								const roleId = role.id.toString();
+								const roleName =
+									interaction.guild?.roles.cache.get(
+										roleId
+									)?.name;
 
-            const embed = new EmbedBuilder()
-                .setTitle(i18next.t("shop.title", { lng: interaction.locale }))
-                .setDescription(
-                    rolesList.map(role => {
-                        const roleName = interaction.guild?.roles.cache.get(role.id.toString())?.name;
-                        return `${roleName} - ${role.price}$`
-                    }).join("\n")
-                )
-                .setColor(Colors.LuminousVividPink)
+								return new StringSelectMenuOptionBuilder()
+									.setLabel(roleName || "Role name not found")
+									.setValue(roleId);
+							})
+						)
+				);
 
-            const selectRow = new ActionRowBuilder<StringSelectMenuBuilder>()
-                .addComponents(
-                    new StringSelectMenuBuilder()
-                        .setCustomId("role")
-                        .setPlaceholder(i18next.t("shop.select_role", { lng: interaction.locale }))
-                        .addOptions(
-                            rolesList.map(role => {
-                                const roleId = role.id.toString();
-                                const roleName = interaction.guild?.roles.cache.get(roleId)?.name;
+			const buttonRow =
+				new ActionRowBuilder<ButtonBuilder>().addComponents(
+					new ButtonBuilder()
+						.setLabel(
+							i18next.t("shop.prev", { lng: interaction.locale })
+						)
+						.setStyle(ButtonStyle.Primary)
+						.setCustomId("prev"),
+					new ButtonBuilder()
+						.setLabel(
+							i18next.t("shop.next", { lng: interaction.locale })
+						)
+						.setStyle(ButtonStyle.Primary)
+						.setCustomId("next")
+				);
 
-                                return new StringSelectMenuOptionBuilder()
-                                    .setLabel(roleName || "Role name not found")
-                                    .setValue(roleId)
-                            })
-                        )
-                )
+			const reply = await interaction.reply({
+				embeds: [embed],
+				components: [selectRow, buttonRow],
+				flags: [MessageFlags.Ephemeral],
+			});
 
-            const buttonRow = new ActionRowBuilder<ButtonBuilder>()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setLabel(i18next.t("shop.prev", { lng: interaction.locale }))
-                        .setStyle(ButtonStyle.Primary)
-                        .setCustomId("prev"),
-                    new ButtonBuilder()
-                        .setLabel(i18next.t("shop.next", { lng: interaction.locale }))
-                        .setStyle(ButtonStyle.Primary)
-                        .setCustomId("next")
-                )
+			const collector = reply.createMessageComponentCollector({
+				componentType: ComponentType.Button,
+				time: 60_000,
+			});
 
-            const reply = await interaction.reply({
-                embeds: [embed],
-                components: [selectRow, buttonRow],
-                flags: [MessageFlags.Ephemeral],
-            })
+			collector.on("collect", async (collected) => {
+				switch (collected.customId) {
+					case "prev": {
+						// do stuff
+						break;
+					}
+					case "next": {
+						// do stuff
+						break;
+					}
+				}
+			});
 
-            const collector = reply.createMessageComponentCollector({
-                componentType: ComponentType.Button,
-                time: 60_000
-            })
+			collector.on("end", async () => {
+				selectRow.components.forEach((component) => {
+					component.setDisabled(true);
+				});
+				buttonRow.components.forEach((component) => {
+					component.setDisabled(true);
+				});
 
-            collector.on("collect", async (collected) => {
-                switch (collected.customId) {
-                    case "prev": {
-                        // do stuff
-                        break;
-                    }
-                    case "next": {
-                        // do stuff
-                        break;
-                    }
-                }
-            })
+				interaction.editReply({
+					components: [selectRow, buttonRow],
+				});
+			});
+		} catch (error) {
+			bot.logger.error(error);
+			if (interaction.replied) {
+				interaction.editReply({
+					content: i18next.t("internal_error", {
+						lng: interaction.locale,
+					}),
+				});
+			} else {
+				interaction.reply({
+					content: i18next.t("internal_error", {
+						lng: interaction.locale,
+					}),
+					flags: [MessageFlags.Ephemeral],
+				});
+			}
+		}
+	}
 
-            collector.on("end", async () => {
-                selectRow.components.forEach(component => {
-                    component.setDisabled(true)
-                })
-                buttonRow.components.forEach(component => {
-                    component.setDisabled(true)
-                })
+	async execute(interaction: Interaction) {
+		if (!interaction.isButton()) return;
 
-                interaction.editReply({
-                    components: [selectRow, buttonRow],
-                })
-            })
-        } catch (error) {
-            bot.logger.error(error);
-            if (interaction.replied) {
-                interaction.editReply({
-                    content: i18next.t("internal_error", { lng: interaction.locale }),
-                })
-            } else {
-                interaction.reply({
-                    content: i18next.t("internal_error", { lng: interaction.locale }),
-                    flags: [MessageFlags.Ephemeral],
-                })
-            }
-        }
-    }
+		const button = interaction.customId;
 
-    async execute(interaction: Interaction) {
-        if (!interaction.isButton()) return;
-
-        const button = interaction.customId;
-
-        switch (button) {
-            case "open": {
-                this.open(interaction);
-                break;
-            }
-        }
-    }
+		switch (button) {
+			case "open": {
+				this.open(interaction);
+				break;
+			}
+		}
+	}
 }

@@ -7,31 +7,31 @@ import { createLogger, format, transports } from "winston";
 dotenv.config();
 
 export const bot = new Bot(
-  new Client({
-    intents: [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMembers,
-      GatewayIntentBits.GuildMessages
-    ]
-  }),
-  drizzle({
-    connection: {
-      host: process.env.POSTGRES_HOST,
-      user: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB,
-    }
-  }),
-  createLogger({
-    level: "info",
-    format: format.cli(),
-    transports: [new transports.Console()]
-  }),
-  {
-    fallbackLng: "en",
-    preload: ["en", "ru"],
-    backend: {
-      loadPath: "./locales/{{lng}}.json",
-    }
-  },
-)
+	new Client({
+		intents: [
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildMembers,
+			GatewayIntentBits.GuildMessages,
+		],
+	}),
+	drizzle({
+		connection: {
+			host: process.env.POSTGRES_HOST,
+			user: process.env.POSTGRES_USER,
+			password: process.env.POSTGRES_PASSWORD,
+			database: process.env.POSTGRES_DB,
+		},
+	}),
+	createLogger({
+		level: "info",
+		format: format.cli(),
+		transports: [new transports.Console()],
+	}),
+	{
+		fallbackLng: "en",
+		preload: ["en", "ru"],
+		backend: {
+			loadPath: "./locales/{{lng}}.json",
+		},
+	}
+);

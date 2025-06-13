@@ -7,50 +7,59 @@ import { guilds, members, users } from "../schema";
 import { eq } from "drizzle-orm";
 
 export default class GuildMemberAddEvent extends Event<Events.GuildMemberAdd> {
-  constructor() {
-    super(Events.GuildMemberAdd, false);
-  };
+	constructor() {
+		super(Events.GuildMemberAdd, false);
+	}
 
-  async execute(member: GuildMember) {
-    await bot.drizzle.transaction(async (tx) => {
-      await tx.insert(users).values({
-        id: BigInt(member.user.id),
-      }).onConflictDoNothing();
+	async execute(member: GuildMember) {
+		await bot.drizzle.transaction(async (tx) => {
+			await tx
+				.insert(users)
+				.values({
+					id: BigInt(member.user.id),
+				})
+				.onConflictDoNothing();
 
-      await tx.insert(members).values({
-        id: BigInt(member.user.id),
-        guildId: BigInt(member.guild.id),
-      }).onConflictDoNothing();
-    });
+			await tx
+				.insert(members)
+				.values({
+					id: BigInt(member.user.id),
+					guildId: BigInt(member.guild.id),
+				})
+				.onConflictDoNothing();
+		});
 
-    if (
-      member.guild.features.includes(GuildFeature.MemberVerificationGateEnabled) ||
-      !member.guild.systemChannel
-    ) return;
+		if (
+			member.guild.features.includes(
+				GuildFeature.MemberVerificationGateEnabled
+			) ||
+			!member.guild.systemChannel
+		)
+			return;
 
-    const [config] = await bot.drizzle
-      .select({ joinMessage: guilds.joinMessage })
-      .from(guilds)
-      .where(eq(guilds.id, BigInt(member.guild.id)))
+		const [config] = await bot.drizzle
+			.select({ joinMessage: guilds.joinMessage })
+			.from(guilds)
+			.where(eq(guilds.id, BigInt(member.guild.id)));
 
-    let message: string;
-    if (config?.joinMessage) {
-      message = config.joinMessage
-        .replace("{{displayname}}", member.user.displayName)
-        .replace("{{username}}", member.user.username)
-        .replace("{{mention}}", `<@${member.user.id}>`)
-        .replace("{{guild}}", member.guild.name)
-    } else {
-      const locale = await getGuildLocale(member.guild.id);
-      if (!locale) return;
+		let message: string;
+		if (config?.joinMessage) {
+			message = config.joinMessage
+				.replace("{{displayname}}", member.user.displayName)
+				.replace("{{username}}", member.user.username)
+				.replace("{{mention}}", `<@${member.user.id}>`)
+				.replace("{{guild}}", member.guild.name);
+		} else {
+			const locale = await getGuildLocale(member.guild.id);
+			if (!locale) return;
 
-      message = i18next.t("greeting", {
-        guild: member.guild.name,
-        memberId: member.user.id,
-        lng: locale,
-      })
-    }
+			message = i18next.t("greeting", {
+				guild: member.guild.name,
+				memberId: member.user.id,
+				lng: locale,
+			});
+		}
 
-    member.guild.systemChannel.send(message);
-  }
-};
+		member.guild.systemChannel.send(message);
+	}
+}
