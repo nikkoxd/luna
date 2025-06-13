@@ -60,6 +60,11 @@
       "reply": {
         "balance": "Your balance: {{balance}} coins."
       }
+    },
+    "level": {
+      "reply": {
+        "level": "Your level: {{level}}."
+      }
     }
   },
   "developer-only": "This command can only be run by the bot's developer.",
@@ -75,5 +80,9 @@
     "message_create": {
       "level_up": "<@{{userId}}>, you just leveled up to level {{level}}!"
     }
+  },
+  "log": {
+    "responsible": "Responsible",
+    "target": "Target"
   }
 }

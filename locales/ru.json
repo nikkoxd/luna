@@ -60,6 +60,11 @@
       "reply": {
         "balance": "Твой баланс: {{balance}} монеток."
       }
+    },
+    "level": {
+      "reply": {
+        "level": "Твой уровень: {{level}}."
+      }
     }
   },
   "developer-only": "Эта команда может быть выполнена только разработчиком бота.",
@@ -75,5 +80,9 @@
     "message_create": {
       "level_up": "<@{{userId}}> достиг {{level}} уровня!"
     }
+  },
+  "log": {
+    "responsible": "Ответственный",
+    "target": "Цель"
   }
 }
