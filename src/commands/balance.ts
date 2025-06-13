@@ -10,6 +10,7 @@ export default class BalanceCommand extends Command {
         super(new SlashCommandBuilder()
             .setName("balance")
             .setDescription("Check your balance")
+            .setDescriptionLocalization("ru", "Проверить баланс")
         )
     }
 

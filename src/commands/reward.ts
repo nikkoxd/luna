@@ -6,98 +6,104 @@ import i18next from "i18next";
 import { and, eq } from "drizzle-orm";
 
 export default class RoleCommand extends Command {
-  constructor() {
-    super(new SlashCommandBuilder()
-      .setName("reward")
-      .setDescription("Commands related to rewards")
-      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-      .addSubcommand(subcommand => subcommand
-        .setName("add")
-        .setDescription("Add a role to rewards list")
-        .addRoleOption(option => option
-          .setName("role")
-          .setDescription("The role to add")
-          .setRequired(true)
+    constructor() {
+        super(new SlashCommandBuilder()
+            .setName("reward")
+            .setDescription("Commands related to rewards")
+            .setDescriptionLocalization("ru", "Команды связанные с наградами")
+            .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+            .addSubcommand(subcommand => subcommand
+                .setName("add")
+                .setDescription("Add a role to rewards list")
+                .setDescriptionLocalization("ru", "Добавить роль в список наград")
+                .addRoleOption(option => option
+                    .setName("role")
+                    .setDescription("The role to add")
+                    .setDescriptionLocalization("ru", "Роль для добавления в список наград")
+                    .setRequired(true)
+                )
+                .addNumberOption(option => option
+                    .setName("level")
+                    .setDescription("The level required to get the role")
+                    .setDescriptionLocalization("ru", "Уровень, требуемый для получения роли")
+                    .setRequired(true)
+                )
+            )
+            .addSubcommand(subcommand => subcommand
+                .setName("remove")
+                .setDescription("Remove a role from rewards list")
+                .setDescriptionLocalization("ru", "Удалить роль из списка наград")
+                .addRoleOption(option => option
+                    .setName("role")
+                    .setDescription("The role to remove")
+                    .setDescriptionLocalization("ru", "Роль, которую нужно удалить")
+                    .setRequired(true)
+                )
+            )
         )
-        .addNumberOption(option => option
-          .setName("level")
-          .setDescription("The level required to get the role")
-          .setRequired(true)
-        )
-      )
-      .addSubcommand(subcommand => subcommand
-        .setName("remove")
-        .setDescription("Remove a role from rewards list")
-        .addRoleOption(option => option
-          .setName("role")
-          .setDescription("The role to remove")
-          .setRequired(true)
-        )
-      )
-    )
-  }
-
-  async add(interaction: ChatInputCommandInteraction) {
-    const role = interaction.options.getRole("role", true);
-    const level = interaction.options.getNumber("level", true);
-
-    if (!interaction.guildId) return;
-
-    const result = await bot.drizzle.insert(roles).values({
-      id: BigInt(role.id),
-      guildId: BigInt(interaction.guildId),
-      level: level,
-    }).onConflictDoNothing().returning();
-
-    if (result.length === 0) {
-      interaction.reply({
-        content: i18next.t("command.role.reply.add_error", { lng: interaction.locale }),
-        flags: [MessageFlags.Ephemeral],
-      });
-      return;
     }
 
-    interaction.reply({
-      content: i18next.t("command.role.reply.added", { lng: interaction.locale }),
-      flags: [MessageFlags.Ephemeral],
-    });
-  }
+    async add(interaction: ChatInputCommandInteraction) {
+        const role = interaction.options.getRole("role", true);
+        const level = interaction.options.getNumber("level", true);
 
-  async remove(interaction: ChatInputCommandInteraction) {
-    const role = interaction.options.getRole("role", true);
+        if (!interaction.guildId) return;
 
-    if (!interaction.guildId) return;
+        const result = await bot.drizzle.insert(roles).values({
+            id: BigInt(role.id),
+            guildId: BigInt(interaction.guildId),
+            level: level,
+        }).onConflictDoNothing().returning();
 
-    const result = await bot.drizzle.delete(roles).where(and(
-      eq(roles.id, BigInt(role.id)),
-      eq(roles.guildId, BigInt(interaction.guildId))
-    )).returning();
+        if (result.length === 0) {
+            interaction.reply({
+                content: i18next.t("command.role.reply.add_error", { lng: interaction.locale }),
+                flags: [MessageFlags.Ephemeral],
+            });
+            return;
+        }
 
-    if (result.length === 0) {
-      interaction.reply({
-        content: i18next.t("command.role.reply.removal_error", { lng: interaction.locale }),
-        flags: [MessageFlags.Ephemeral],
-      });
-      return;
+        interaction.reply({
+            content: i18next.t("command.role.reply.added", { lng: interaction.locale }),
+            flags: [MessageFlags.Ephemeral],
+        });
     }
 
-    interaction.reply({
-      content: i18next.t("command.role.reply.removed", { lng: interaction.locale }),
-      flags: [MessageFlags.Ephemeral],
-    });
-  }
+    async remove(interaction: ChatInputCommandInteraction) {
+        const role = interaction.options.getRole("role", true);
 
-  async execute(interaction: ChatInputCommandInteraction) {
-    const subcommand = interaction.options.getSubcommand();
-    switch (subcommand) {
-      case "add": {
-        this.add(interaction);
-        break;
-      }
-      case "remove": {
-        this.remove(interaction);
-        break;
-      }
+        if (!interaction.guildId) return;
+
+        const result = await bot.drizzle.delete(roles).where(and(
+            eq(roles.id, BigInt(role.id)),
+            eq(roles.guildId, BigInt(interaction.guildId))
+        )).returning();
+
+        if (result.length === 0) {
+            interaction.reply({
+                content: i18next.t("command.role.reply.removal_error", { lng: interaction.locale }),
+                flags: [MessageFlags.Ephemeral],
+            });
+            return;
+        }
+
+        interaction.reply({
+            content: i18next.t("command.role.reply.removed", { lng: interaction.locale }),
+            flags: [MessageFlags.Ephemeral],
+        });
     }
-  }
+
+    async execute(interaction: ChatInputCommandInteraction) {
+        const subcommand = interaction.options.getSubcommand();
+        switch (subcommand) {
+            case "add": {
+                this.add(interaction);
+                break;
+            }
+            case "remove": {
+                this.remove(interaction);
+                break;
+            }
+        }
+    }
 }
