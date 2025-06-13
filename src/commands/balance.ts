@@ -27,7 +27,7 @@ export default class BalanceCommand extends Command {
                     { balance: user.balance, lng: interaction.locale }
                 )
             })
-        } catch (error) {
+        } catch {
             interaction.reply({
                 content: i18next.t(
                     "command.balance.reply.balance",

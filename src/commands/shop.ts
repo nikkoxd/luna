@@ -101,7 +101,7 @@ export default class ShopCommand extends Command {
         ),
         flags: [MessageFlags.Ephemeral],
       })
-    } catch (error) {
+    } catch {
       interaction.reply({
         content: i18next.t(
           "command.shop.reply.role_exists",
@@ -133,7 +133,7 @@ export default class ShopCommand extends Command {
         embeds: [embed],
         flags: [MessageFlags.Ephemeral],
       })
-    } catch (error) {
+    } catch {
       interaction.reply({
         content: i18next.t(
           "command.shop.reply.no_items",

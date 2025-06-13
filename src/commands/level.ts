@@ -27,7 +27,7 @@ export default class LevelCommand extends Command {
                     { level: user.level, lng: interaction.locale }
                 )
             })
-        } catch (error) {
+        } catch {
             interaction.reply({
                 content: i18next.t(
                     "command.level.reply.level",

@@ -1,4 +1,4 @@
-import { ActivityType, ApplicationCommandDataResolvable, Client, Collection, Events, Interaction, REST, Routes } from "discord.js";
+import { ActivityType, ApplicationCommandDataResolvable, Client, ClientEvents, Collection, Events, Interaction, REST, Routes } from "discord.js";
 import path from "path";
 import { readdirSync } from "fs";
 import { Event } from "./base/Event";
@@ -58,7 +58,7 @@ export class Bot {
                 continue;
             }
 
-            const eventInstance: Event<any> = new eventClass();
+            const eventInstance: Event<keyof ClientEvents> = new eventClass();
             if (eventInstance.once) {
                 this.client.once(eventInstance.name, (...args) => eventInstance.execute(...args));
             } else {
@@ -94,7 +94,7 @@ export class Bot {
 
         try {
             rest.put(Routes.applicationCommands(this.client.user!.id), { body: this.commands })
-        } catch (error: any) {
+        } catch (error) {
             this.logger.error(error);
         } finally {
             this.logger.info("Registered commands");
@@ -102,7 +102,7 @@ export class Bot {
     }
 
     private async onInteractionCreate() {
-        this.client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<any> => {
+        this.client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<unknown> => {
             if (!interaction.isChatInputCommand()) return;
 
             const command = this.commandsCollection.get(interaction.commandName);
