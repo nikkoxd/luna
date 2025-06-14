@@ -3,11 +3,13 @@ import {
 	MessageFlags,
 	SlashCommandBuilder,
 } from "discord.js";
-import { Command } from "../base/Command";
-import { bot } from "..";
-import { members } from "../schema";
-import i18next from "i18next";
+
 import { sql } from "drizzle-orm";
+import i18next from "i18next";
+
+import { bot } from "..";
+import { Command } from "../base/Command";
+import { members } from "../schema";
 
 export default class ExpCommand extends Command {
 	constructor() {

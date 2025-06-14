@@ -13,11 +13,13 @@ import {
 	StringSelectMenuInteraction,
 	StringSelectMenuOptionBuilder,
 } from "discord.js";
-import { Event } from "../base/Event";
-import { bot } from "..";
-import { roles } from "../schema";
+
 import { eq } from "drizzle-orm";
 import i18next from "i18next";
+
+import { bot } from "..";
+import { Event } from "../base/Event";
+import { roles } from "../schema";
 
 export default class ButtonInteractionEvent extends Event<Events.InteractionCreate> {
 	constructor() {

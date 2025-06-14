@@ -1,8 +1,10 @@
+import { Colors, EmbedBuilder, GuildMember } from "discord.js";
+
 import { eq } from "drizzle-orm";
+import i18next from "i18next";
+
 import { bot } from ".";
 import { guilds } from "./schema";
-import { Colors, EmbedBuilder, GuildMember } from "discord.js";
-import i18next from "i18next";
 
 export async function getGuildLocale(guildId: string): Promise<string> {
 	const [config] = await bot.drizzle

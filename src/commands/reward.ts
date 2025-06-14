@@ -4,11 +4,13 @@ import {
 	PermissionFlagsBits,
 	SlashCommandBuilder,
 } from "discord.js";
-import { Command } from "../base/Command";
-import { bot } from "..";
-import { roles } from "../schema";
-import i18next from "i18next";
+
 import { and, eq } from "drizzle-orm";
+import i18next from "i18next";
+
+import { bot } from "..";
+import { Command } from "../base/Command";
+import { roles } from "../schema";
 
 export default class RoleCommand extends Command {
 	constructor() {

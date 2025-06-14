@@ -1,7 +1,9 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command } from "../base/Command";
+
 import i18next from "i18next";
+
 import { bot } from "..";
+import { Command } from "../base/Command";
 
 export default class PingCommand extends Command {
 	constructor() {

@@ -4,11 +4,13 @@ import {
 	PermissionFlagsBits,
 	SlashCommandBuilder,
 } from "discord.js";
-import { Command } from "../base/Command";
-import { bot } from "..";
-import { guilds } from "../schema";
+
 import { eq } from "drizzle-orm";
 import i18next from "i18next";
+
+import { bot } from "..";
+import { Command } from "../base/Command";
+import { guilds } from "../schema";
 
 export default class ConfigCommand extends Command {
 	constructor() {

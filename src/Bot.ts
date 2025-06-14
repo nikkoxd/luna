@@ -9,15 +9,17 @@ import {
 	REST,
 	Routes,
 } from "discord.js";
-import path from "path";
-import { readdirSync } from "fs";
-import { Event } from "./base/Event";
+
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { readdirSync } from "fs";
 import i18next, { InitOptions } from "i18next";
 import Backend from "i18next-fs-backend";
+import path from "path";
 import { Logger } from "winston";
+
 import { Command } from "./base/Command";
+import { Event } from "./base/Event";
 
 export class Bot {
 	public commands = new Array<ApplicationCommandDataResolvable>();

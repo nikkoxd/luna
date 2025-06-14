@@ -1,10 +1,12 @@
 import { Events, GuildFeature, GuildMember } from "discord.js";
-import { Event } from "../base/Event";
-import i18next from "i18next";
-import { getGuildLocale } from "../utils";
-import { bot } from "..";
-import { guilds, members, users } from "../schema";
+
 import { eq } from "drizzle-orm";
+import i18next from "i18next";
+
+import { bot } from "..";
+import { Event } from "../base/Event";
+import { guilds, members, users } from "../schema";
+import { getGuildLocale } from "../utils";
 
 export default class GuildMemberAddEvent extends Event<Events.GuildMemberAdd> {
 	constructor() {

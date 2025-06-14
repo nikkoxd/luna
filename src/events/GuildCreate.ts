@@ -1,8 +1,10 @@
-import { eq } from "drizzle-orm";
-import { bot } from "..";
-import { guilds } from "../schema";
-import { Event } from "../base/Event";
 import { Events, Guild } from "discord.js";
+
+import { eq } from "drizzle-orm";
+
+import { bot } from "..";
+import { Event } from "../base/Event";
+import { guilds } from "../schema";
 
 export default class GuildCreateEvent extends Event<Events.GuildCreate> {
 	constructor() {

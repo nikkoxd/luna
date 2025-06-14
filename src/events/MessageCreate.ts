@@ -1,10 +1,12 @@
 import { Collection, Events, GuildMember, Message } from "discord.js";
-import { Event } from "../base/Event";
-import { bot } from "..";
-import { guilds, members, roles, users } from "../schema";
-import { and, eq, gte, sql } from "drizzle-orm";
+
 import { randomInt } from "crypto";
+import { and, eq, gte, sql } from "drizzle-orm";
 import i18next from "i18next";
+
+import { bot } from "..";
+import { Event } from "../base/Event";
+import { guilds, members, roles, users } from "../schema";
 import { getGuildLocale } from "../utils";
 
 export default class MessageCreateEvent extends Event<Events.MessageCreate> {

@@ -7,11 +7,13 @@ import {
 	PermissionFlagsBits,
 	SlashCommandBuilder,
 } from "discord.js";
-import { Command } from "../base/Command";
-import { bot } from "..";
-import { members, users } from "../schema";
-import { z } from "zod";
+
 import i18next from "i18next";
+import { z } from "zod";
+
+import { bot } from "..";
+import { Command } from "../base/Command";
+import { members, users } from "../schema";
 
 export default class ImportCommand extends Command {
 	constructor() {
