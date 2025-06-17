@@ -30,7 +30,10 @@
         "added": "Role added.",
         "add_error": "Error adding role.",
         "removal_error": "Error removing role.",
-        "removed": "Role removed."
+        "removed": "Role removed.",
+        "list_empty": "No rewards set for this server.",
+        "list_title": "Rewards list",
+        "list_item": "<@&{{roleId}}> - level {{roleLevel}}"
       }
     },
     "exp": {

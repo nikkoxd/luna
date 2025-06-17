@@ -1,11 +1,13 @@
 import {
 	ChatInputCommandInteraction,
+	Colors,
+	EmbedBuilder,
 	MessageFlags,
 	PermissionFlagsBits,
 	SlashCommandBuilder,
 } from "discord.js";
 
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import i18next from "i18next";
 
 import { bot } from "..";
@@ -53,6 +55,12 @@ export default class RoleCommand extends Command {
 								)
 								.setRequired(true)
 						)
+				)
+				.addSubcommand((subcommand) =>
+					subcommand
+						.setName("list")
+						.setDescription("List all rewards")
+						.setDescriptionLocalization("ru", "Список всех наград")
 				)
 				.addSubcommand((subcommand) =>
 					subcommand
@@ -143,6 +151,48 @@ export default class RoleCommand extends Command {
 		});
 	}
 
+	private async list(interaction: ChatInputCommandInteraction) {
+		if (!interaction.guildId) return;
+
+		try {
+			const rolesList = await bot.drizzle
+				.select({ id: roles.id, level: roles.level })
+				.from(roles)
+				.where(eq(roles.guildId, BigInt(interaction.guildId)))
+                .orderBy(asc(roles.level));
+
+            const embed = new EmbedBuilder()
+                .setTitle(i18next.t("command.role.reply.list_title", {
+                    lng: interaction.locale,
+                }))
+                .setColor(Colors.Purple)
+                .setDescription(
+                    rolesList
+                        .map((role) => {
+                            return i18next.t("command.role.reply.list_item", {
+                                roleId: role.id.toString(),
+                                roleLevel: role.level,
+                                lng: interaction.locale,
+                            });
+                        })
+                        .join("\n")
+                );
+
+			interaction.reply({
+				embeds: [embed],
+				flags: [MessageFlags.Ephemeral],
+			});
+		} catch {
+			interaction.reply({
+				content: i18next.t("command.role.reply.list_empty", {
+					lng: interaction.locale,
+				}),
+				flags: [MessageFlags.Ephemeral],
+			});
+			return;
+		}
+	}
+
 	async execute(interaction: ChatInputCommandInteraction) {
 		const subcommand = interaction.options.getSubcommand();
 		switch (subcommand) {
@@ -150,6 +200,10 @@ export default class RoleCommand extends Command {
 				this.add(interaction);
 				break;
 			}
+            case "list": {
+                this.list(interaction);
+                break;
+            }
 			case "remove": {
 				this.remove(interaction);
 				break;
