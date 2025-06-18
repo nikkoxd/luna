@@ -68,6 +68,13 @@
       "reply": {
         "level": "Your level: {{level}}."
       }
+    },
+    "set": {
+      "level": {
+        "reply": {
+          "success": "Set <@{{memberId}}>'s level to `{{level}}`"
+        }
+      }
     }
   },
   "developer-only": "This command can only be run by the bot's developer.",
