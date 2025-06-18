@@ -7,7 +7,7 @@ import i18next from "i18next";
 import { bot } from "..";
 import { Event } from "../base/Event";
 import { guilds, members, roles, users } from "../schema";
-import { getGuildLocale } from "../utils";
+import { getGuildLocale, processRewards } from "../utils";
 
 export default class MessageCreateEvent extends Event<Events.MessageCreate> {
 	constructor() {
@@ -31,38 +31,6 @@ export default class MessageCreateEvent extends Event<Events.MessageCreate> {
 		return false;
 	}
 
-	private async processRewards(member: GuildMember, level: number) {
-		try {
-			const result = await bot.drizzle
-				.select({ id: roles.id, level: roles.level })
-				.from(roles)
-				.where(
-					and(
-						eq(roles.guildId, BigInt(member.guild.id)),
-						lte(roles.level, level)
-					)
-				)
-				.orderBy(asc(roles.level));
-
-			for (const role of result) {
-				const guildRole = member.guild.roles.cache.get(
-					role.id.toString()
-				);
-				if (!guildRole) continue;
-
-				member.roles.remove(guildRole);
-			}
-
-			const highestGuildRole = member.guild.roles.cache.get(
-				result[result.length - 1].id.toString()
-			);
-			if (!highestGuildRole) return;
-
-			member.roles.add(highestGuildRole);
-		} catch (error) {
-			bot.logger.error(error);
-		}
-	}
 
 	private async processMessage(message: Message): Promise<void> {
 		if (!message.guild) {
@@ -125,7 +93,7 @@ export default class MessageCreateEvent extends Event<Events.MessageCreate> {
 			if (newLevel > previousLevel) {
 				if (!message.channel.isSendable()) return;
 
-				this.processRewards(message.member!, newLevel);
+				await processRewards(message.member!, newLevel);
 				message.channel.send(
 					i18next.t("event.message_create.level_up", {
 						userId: message.author.id,

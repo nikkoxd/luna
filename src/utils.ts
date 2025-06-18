@@ -1,10 +1,10 @@
 import { Colors, EmbedBuilder, GuildMember } from "discord.js";
 
-import { eq } from "drizzle-orm";
+import { and, asc, eq, lte } from "drizzle-orm";
 import i18next from "i18next";
 
 import { bot } from ".";
-import { guilds } from "./schema";
+import { guilds, roles } from "./schema";
 
 export async function getGuildLocale(guildId: string): Promise<string> {
 	const [config] = await bot.drizzle
@@ -69,6 +69,36 @@ export async function sendLog(
 		}
 
 		await channel.send({ embeds: [embed] });
+	} catch (error) {
+		bot.logger.error(error);
+	}
+}
+
+export async function processRewards(member: GuildMember, level: number) {
+	try {
+		const result = await bot.drizzle
+			.select({ id: roles.id, level: roles.level })
+			.from(roles)
+			.where(and(eq(roles.guildId, BigInt(member.guild.id))))
+			.orderBy(asc(roles.level));
+
+		const currentLevelRole = result.find((role) => role.level === level);
+		if (!currentLevelRole) throw new Error("Current level role not found");
+
+		for (const role of result) {
+			const guildRole = member.guild.roles.cache.get(role.id.toString());
+			if (!guildRole) continue;
+
+			await member.roles.remove(guildRole);
+		}
+
+		const currentLevelGuildRole = member.guild.roles.cache.get(
+			currentLevelRole.id.toString()
+		);
+		if (!currentLevelGuildRole)
+			throw new Error("Current level role not found");
+
+		await member.roles.add(currentLevelGuildRole);
 	} catch (error) {
 		bot.logger.error(error);
 	}

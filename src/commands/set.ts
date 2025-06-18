@@ -11,6 +11,7 @@ import { level } from "winston";
 import { bot } from "..";
 import { Command } from "../base/Command";
 import { members } from "../schema";
+import { processRewards } from "../utils";
 
 export default class ExpCommand extends Command {
 	constructor() {
@@ -85,58 +86,65 @@ export default class ExpCommand extends Command {
 	}
 
 	private async exp(interaction: ChatInputCommandInteraction) {
-		const member = interaction.options.getUser("member", true);
-		const exp = interaction.options.getNumber("exp", true);
-
 		if (!interaction.guildId) return;
 
-		const result = await bot.drizzle
-			.insert(members)
-			.values({
-				id: BigInt(member.id),
-				guildId: BigInt(interaction.guildId),
-				exp: exp,
-			})
-			.onConflictDoUpdate({
-				target: [members.id, members.guildId],
-				set: {
-					exp: exp,
-					level: sql`FLOOR((SQRT(4 * ${exp} / 50 + 1) - 1) / 2)`,
-				},
-			})
-			.returning();
+		try {
+			const user = interaction.options.getUser("member", true);
+			const exp = interaction.options.getNumber("exp", true);
 
-		if (result.length === 0) {
+			const [result] = await bot.drizzle
+				.insert(members)
+				.values({
+					id: BigInt(user.id),
+					guildId: BigInt(interaction.guildId),
+					exp: exp,
+				})
+				.onConflictDoUpdate({
+					target: [members.id, members.guildId],
+					set: {
+						exp: exp,
+						level: sql`FLOOR((SQRT(4 * ${exp} / 50 + 1) - 1) / 2)`,
+					},
+				})
+				.returning();
+
+			const member = interaction.guild?.members.cache.get(user.id);
+			if (!member) throw new Error("Member not found");
+
+			await processRewards(member, result.level);
+
 			interaction.reply({
-				content: i18next.t("command.exp.reply.set_error", {
+				content: i18next.t("command.exp.reply.success", {
+					memberId: user.id,
+					exp: exp,
+					level: result.level,
+					lng: interaction.locale,
+				}),
+				flags: [MessageFlags.Ephemeral],
+			});
+		} catch (error) {
+			bot.logger.error(error);
+
+			interaction.reply({
+				content: i18next.t("internal_error", {
 					lng: interaction.locale,
 				}),
 				flags: [MessageFlags.Ephemeral],
 			});
 		}
-
-		interaction.reply({
-			content: i18next.t("command.exp.reply.success", {
-				memberId: member.id,
-				exp: exp,
-				level: result[0].level,
-				lng: interaction.locale,
-			}),
-			flags: [MessageFlags.Ephemeral],
-		});
 	}
 
 	private async level(interaction: ChatInputCommandInteraction) {
 		if (!interaction.guildId) return;
 
 		try {
-			const member = interaction.options.getUser("member", true);
+			const user = interaction.options.getUser("member", true);
 			const level = interaction.options.getNumber("level", true);
 
-			const result = await bot.drizzle
+			await bot.drizzle
 				.insert(members)
 				.values({
-					id: BigInt(member.id),
+					id: BigInt(user.id),
 					guildId: BigInt(interaction.guildId),
 					level: level,
 				})
@@ -147,23 +155,28 @@ export default class ExpCommand extends Command {
 					},
 				});
 
-            interaction.reply({
-                content: i18next.t("command.set.level.reply.success", {
-                    memberId: member.id,
-                    level: level,
-                    lng: interaction.locale,
-                }),
-                flags: [MessageFlags.Ephemeral],
-            });
+			const member = interaction.guild?.members.cache.get(user.id);
+			if (!member) throw new Error("Member not found");
+
+			await processRewards(member, level);
+
+			interaction.reply({
+				content: i18next.t("command.set.level.reply.success", {
+					memberId: user.id,
+					level: level,
+					lng: interaction.locale,
+				}),
+				flags: [MessageFlags.Ephemeral],
+			});
 		} catch (error) {
 			bot.logger.error(error);
 
-            interaction.reply({
-                content: i18next.t("internal_error", {
-                    lng: interaction.locale,
-                }),
-                flags: [MessageFlags.Ephemeral],
-            });
+			interaction.reply({
+				content: i18next.t("internal_error", {
+					lng: interaction.locale,
+				}),
+				flags: [MessageFlags.Ephemeral],
+			});
 		}
 	}
 
