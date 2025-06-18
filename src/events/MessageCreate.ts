@@ -1,7 +1,7 @@
 import { Collection, Events, GuildMember, Message } from "discord.js";
 
 import { randomInt } from "crypto";
-import { and, eq, gte, sql } from "drizzle-orm";
+import { and, asc, eq, lte, sql } from "drizzle-orm";
 import i18next from "i18next";
 
 import { bot } from "..";
@@ -32,31 +32,36 @@ export default class MessageCreateEvent extends Event<Events.MessageCreate> {
 	}
 
 	private async processRewards(member: GuildMember, level: number) {
-		const result = await bot.drizzle
-			.select({ id: roles.id, level: roles.level })
-			.from(roles)
-			.where(
-				and(
-					eq(roles.guildId, BigInt(member.guild.id)),
-					gte(roles.level, level)
+		try {
+			const result = await bot.drizzle
+				.select({ id: roles.id, level: roles.level })
+				.from(roles)
+				.where(
+					and(
+						eq(roles.guildId, BigInt(member.guild.id)),
+						lte(roles.level, level)
+					)
 				)
+				.orderBy(asc(roles.level));
+
+			for (const role of result) {
+				const guildRole = member.guild.roles.cache.get(
+					role.id.toString()
+				);
+				if (!guildRole) continue;
+
+				member.roles.remove(guildRole);
+			}
+
+			const highestGuildRole = member.guild.roles.cache.get(
+				result[result.length - 1].id.toString()
 			);
+			if (!highestGuildRole) return;
 
-		if (result.length === 0) return;
-
-		for (const role of result) {
-			const guildRole = member.guild.roles.cache.get(role.id.toString());
-			if (!guildRole) continue;
-
-			member.roles.remove(guildRole);
+			member.roles.add(highestGuildRole);
+		} catch (error) {
+			bot.logger.error(error);
 		}
-
-		const highestGuildRole = member.guild.roles.cache.get(
-			result[result.length - 1].id.toString()
-		);
-		if (!highestGuildRole) return;
-
-		member.roles.add(highestGuildRole);
 	}
 
 	private async processMessage(message: Message): Promise<void> {
