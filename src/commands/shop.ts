@@ -87,7 +87,7 @@ export default class ShopCommand extends Command {
 					})
 				)
 				.setStyle(ButtonStyle.Primary)
-				.setCustomId("open")
+				.setCustomId("openShop")
 		);
 
 		if (!interaction.channel?.isSendable()) {

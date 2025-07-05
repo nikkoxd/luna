@@ -80,7 +80,7 @@
   "developer-only": "This command can only be run by the bot's developer.",
   "internal_error": "There was an internal error during this interaction.",
   "shop": {
-    "title": "Shop",
+    "title": "Shop - Page {{page}}/{{total}}",
     "next": "Next page",
     "prev": "Previous page",
     "select_role": "Select role",
