@@ -26,7 +26,9 @@ export const bot = new Bot(
 	}),
 	createLogger({
 		level: "info",
-		format: format.cli(),
+		format: format.printf(({ level, message  }) => {
+			return `[${level}] ${message}`;
+		}),
 		transports: [new transports.Console()],
 	}),
 	{

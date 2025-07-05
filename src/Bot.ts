@@ -11,6 +11,20 @@ import { CommandHandler } from "./handlers/CommandHandler";
 import { EventHandler } from "./handlers/EventHandler";
 
 export class Bot {
+	private async runMigrations() {
+        this.logger.info("Running migrations...");
+		await migrate(this.drizzle, {
+			migrationsFolder: path.join(__dirname, "..", "drizzle"),
+		});
+		this.logger.info("Migrations finished.");
+	}
+
+	private async initializei18next() {
+        this.logger.info("Initializing i18next...");
+		await i18next.use(Backend).init(this.i18nextOptions);
+		this.logger.info("i18next initialized.");
+	}
+
 	public constructor(
 		public client: Client,
 		public drizzle: NodePgDatabase,
@@ -41,17 +55,5 @@ export class Bot {
 
 			this.logger.info(`Ready! Logged in as ${readyClient.user.tag}`);
 		});
-	}
-
-	private async runMigrations() {
-		await migrate(this.drizzle, {
-			migrationsFolder: path.join(__dirname, "..", "drizzle"),
-		});
-		this.logger.info("Migrations finished.");
-	}
-
-	private async initializei18next() {
-		await i18next.use(Backend).init(this.i18nextOptions);
-		this.logger.info("i18next initialized.");
 	}
 }
