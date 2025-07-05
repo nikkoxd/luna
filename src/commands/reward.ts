@@ -110,7 +110,7 @@ export default class RoleCommand extends Command {
 			return;
 		}
 
-		interaction.reply({
+		await interaction.reply({
 			content: i18next.t("command.role.reply.added", {
 				lng: interaction.locale,
 			}),
@@ -143,7 +143,7 @@ export default class RoleCommand extends Command {
 			return;
 		}
 
-		interaction.reply({
+		await interaction.reply({
 			content: i18next.t("command.role.reply.removed", {
 				lng: interaction.locale,
 			}),
@@ -178,12 +178,12 @@ export default class RoleCommand extends Command {
                         .join("\n")
                 );
 
-			interaction.reply({
+			await interaction.reply({
 				embeds: [embed],
 				flags: [MessageFlags.Ephemeral],
 			});
 		} catch {
-			interaction.reply({
+			await interaction.reply({
 				content: i18next.t("command.role.reply.list_empty", {
 					lng: interaction.locale,
 				}),

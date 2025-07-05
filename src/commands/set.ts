@@ -6,7 +6,6 @@ import {
 
 import { sql } from "drizzle-orm";
 import i18next from "i18next";
-import { level } from "winston";
 
 import { bot } from "..";
 import { Command } from "../base/Command";

@@ -24,14 +24,14 @@ export default class BalanceCommand extends Command {
 				.from(members)
 				.where(eq(members.id, BigInt(interaction.user.id)));
 
-			interaction.reply({
+			await interaction.reply({
 				content: i18next.t("command.balance.reply.balance", {
 					balance: user.balance,
 					lng: interaction.locale,
 				}),
 			});
 		} catch {
-			interaction.reply({
+			await interaction.reply({
 				content: i18next.t("command.balance.reply.balance", {
 					balance: 0,
 					lng: interaction.locale,

@@ -207,7 +207,7 @@ export default class ImportCommand extends Command {
 
 		switch (subcommand) {
 			case "mongodb": {
-				this.confirm(interaction);
+				await this.confirm(interaction);
 				break;
 			}
 		}

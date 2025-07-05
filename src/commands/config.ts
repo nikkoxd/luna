@@ -97,95 +97,102 @@ export default class ConfigCommand extends Command {
 	}
 
 	async view(interaction: ChatInputCommandInteraction) {
-		if (!interaction.guildId) return;
+		if (!interaction.guildId)
+			throw new Error("Interaction ran outside a guild");
 
-		const [config] = await bot.drizzle
-			.select()
-			.from(guilds)
-			.where(eq(guilds.id, BigInt(interaction.guildId)));
+		try {
+			const [config] = await bot.drizzle
+				.select()
+				.from(guilds)
+				.where(eq(guilds.id, BigInt(interaction.guildId)));
 
-		if (!config) {
-			interaction.reply({
-				content: i18next.t("command.config.reply.not_found", {
+			if (!config) {
+				await interaction.reply({
+					content: i18next.t("command.config.reply.not_found", {
+						lng: interaction.locale,
+					}),
+					flags: [MessageFlags.Ephemeral],
+				});
+				return;
+			}
+
+			await interaction.reply({
+				content: i18next.t("command.config.reply.view", {
+					config: JSON.stringify(
+						config,
+						(_key, value) =>
+							typeof value === "bigint"
+								? value.toString()
+								: value,
+						2
+					),
 					lng: interaction.locale,
+					interpolation: { escapeValue: false },
 				}),
 				flags: [MessageFlags.Ephemeral],
 			});
-			return;
-		}
+		} catch (error) {
+			bot.logger.error(error);
 
-		interaction.reply({
-			content: i18next.t("command.config.reply.view", {
-				config: JSON.stringify(
-					config,
-					(_key, value) =>
-						typeof value === "bigint" ? value.toString() : value,
-					2
-				),
-				lng: interaction.locale,
-				interpolation: { escapeValue: false },
-			}),
-			flags: [MessageFlags.Ephemeral],
-		});
+			await interaction.reply({
+				content: i18next.t("internal_error", {
+					lng: interaction.locale,
+				}),
+			});
+		}
 	}
 
 	async edit(interaction: ChatInputCommandInteraction) {
-		const locale = interaction.locale;
-
-		if (!interaction.guildId) {
-			interaction.reply(
-				i18next.t("command.config.reply.only_on_servers", {
-					lng: locale,
-				})
-			);
-			return;
-		}
+		if (!interaction.guildId)
+			throw new Error("Interaction ran outside a guild");
 
 		const key = interaction.options.getString("key", true);
 		const value = interaction.options.getString("value", true);
 
-		bot.drizzle
-			.update(guilds)
-			.set({ [key]: value })
-			.where(eq(guilds.id, BigInt(interaction.guildId)))
-			.then(() => {
-				bot.logger.info(
-					`Updated ${key} to ${value} in guild ${interaction.guildId}.`
-				);
-				interaction.reply({
-					content: i18next.t("command.config.reply.success", {
-						key,
-						value,
-						lng: locale,
-					}),
-					flags: [MessageFlags.Ephemeral],
-				});
-			})
-			.catch((error: Error) => {
-				bot.logger.error(
-					`Error while updating ${key} to ${value} in guild ${interaction.guildId}: ${error}`
-				);
-				interaction.reply({
-					content: i18next.t("command.config.reply.error", {
-						error,
-						key,
-						value,
-						lng: locale,
-					}),
-					flags: [MessageFlags.Ephemeral],
-				});
+		try {
+			await bot.drizzle
+				.update(guilds)
+				.set({ [key]: value })
+				.where(eq(guilds.id, BigInt(interaction.guildId)));
+
+			await interaction.reply({
+				content: i18next.t("command.config.reply.success", {
+					key,
+					value,
+					lng: interaction.locale,
+				}),
+				flags: [MessageFlags.Ephemeral],
 			});
+
+			bot.logger.info(
+				`Updated ${key} to ${value} in guild ${interaction.guildId}.`
+			);
+		} catch (error) {
+			bot.logger.error(
+				`Error while updating ${key} to ${value} in guild ${interaction.guildId}: ${error}`
+			);
+
+			await interaction.reply({
+				content: i18next.t("command.config.reply.error", {
+					error,
+					key,
+					value,
+					lng: interaction.locale,
+				}),
+				flags: [MessageFlags.Ephemeral],
+			});
+		}
 	}
 
 	async execute(interaction: ChatInputCommandInteraction) {
 		const subcommand = interaction.options.getSubcommand();
 		switch (subcommand) {
 			case "view": {
-				this.view(interaction);
+				await this.view(interaction);
 				break;
 			}
 			case "edit": {
-				this.edit(interaction);
+				await this.edit(interaction);
 				break;
 			}
 		}
