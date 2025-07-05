@@ -12,7 +12,7 @@ Luna is a general-purpose Discord bot built using Node.js and the Discord.js lib
   - [ ] Level cards
 - [ ] Currency system
   - [x] Balance calculation
-  - [ ] Role shop
+  - [x] Role shop
   - [ ] Private rooms
 - [ ] Leaderboards
 - [ ] Custom messages
