@@ -107,7 +107,7 @@ export default class ButtonInteractionEvent extends Event<Events.InteractionCrea
 								price: price,
 								lng: interaction.locale,
 							}),
-                            flags: [MessageFlags.Ephemeral],
+							flags: [MessageFlags.Ephemeral],
 						});
 						return;
 					}
@@ -125,7 +125,7 @@ export default class ButtonInteractionEvent extends Event<Events.InteractionCrea
 								roleId,
 								lng: interaction.locale,
 							}),
-                            flags: [MessageFlags.Ephemeral],
+							flags: [MessageFlags.Ephemeral],
 						});
 					}
 				}
@@ -157,15 +157,20 @@ export default class ButtonInteractionEvent extends Event<Events.InteractionCrea
 						lng: interaction.locale,
 					})
 				)
-				.setDescription(
-					currentPageRoles
-						.map((role) => {
-							const roleName = interaction.guild?.roles.cache.get(
-								role.id.toString()
-							)?.name;
-							return `${roleName} - ${role.price}$`;
-						})
-						.join("\n")
+				.addFields(
+					currentPageRoles.map((role) => {
+						const roleName = interaction.guild?.roles.cache.get(
+							role.id.toString()
+						)?.name;
+						return {
+							name: roleName!,
+							value: i18next.t("shop.role_value", {
+								price: role.price,
+								lng: interaction.locale,
+							}),
+                            inline: true,
+						};
+					})
 				)
 				.setColor(bot.config.color),
 		];

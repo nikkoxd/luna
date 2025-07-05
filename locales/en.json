@@ -86,7 +86,8 @@
     "select_role": "Select role",
     "cancelled": "Shop interaction cancelled.",
     "not_enough_coins": "You don't have enough coins to purchase this.",
-    "bought": "Added role <@&{{roleId}}>!"
+    "bought": "Added role <@&{{roleId}}>!",
+    "role_value": "Price - {{price}} coins"
   },
   "event": {
     "message_create": {
