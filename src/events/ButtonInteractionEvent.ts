@@ -89,7 +89,7 @@ export default class ButtonInteractionEvent extends Event<Events.InteractionCrea
 				}
 			});
 
-			selectInteractionCollector?.once("collect", async (collected) => {
+			selectInteractionCollector?.on("collect", async (collected) => {
 				if (collected.customId === "role") {
 					const roleId = collected.values[0];
 					const price = rolesList.find(
