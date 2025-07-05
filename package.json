@@ -6,8 +6,7 @@
 	"scripts": {
 		"db:generate": "drizzle-kit generate",
 		"build": "tsc",
-		"dev": "nodemon src/index.ts",
-		"prepare": "husky"
+		"dev": "nodemon src/index.ts"
 	},
 	"keywords": [],
 	"author": "",
