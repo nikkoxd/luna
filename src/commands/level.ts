@@ -21,7 +21,7 @@ export default class LevelCommand extends Command {
 		interaction: ChatInputCommandInteraction
 	): Promise<void> {
 		try {
-			const [user] = await bot.drizzle
+			const [user] = await bot.db
 				.select({ level: members.level })
 				.from(members)
 				.where(eq(members.id, BigInt(interaction.user.id)));

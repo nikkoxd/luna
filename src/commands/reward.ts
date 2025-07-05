@@ -1,6 +1,5 @@
 import {
 	ChatInputCommandInteraction,
-	Colors,
 	EmbedBuilder,
 	MessageFlags,
 	PermissionFlagsBits,
@@ -90,7 +89,7 @@ export default class RoleCommand extends Command {
 
 		if (!interaction.guildId) return;
 
-		const result = await bot.drizzle
+		const result = await bot.db
 			.insert(roles)
 			.values({
 				id: BigInt(role.id),
@@ -123,7 +122,7 @@ export default class RoleCommand extends Command {
 
 		if (!interaction.guildId) return;
 
-		const result = await bot.drizzle
+		const result = await bot.db
 			.delete(roles)
 			.where(
 				and(
@@ -155,7 +154,7 @@ export default class RoleCommand extends Command {
 		if (!interaction.guildId) return;
 
 		try {
-			const rolesList = await bot.drizzle
+			const rolesList = await bot.db
 				.select({ id: roles.id, level: roles.level })
 				.from(roles)
 				.where(eq(roles.guildId, BigInt(interaction.guildId)))
@@ -165,7 +164,7 @@ export default class RoleCommand extends Command {
                 .setTitle(i18next.t("command.role.reply.list_title", {
                     lng: interaction.locale,
                 }))
-                .setColor(Colors.Purple)
+                .setColor(bot.config.color)
                 .setDescription(
                     rolesList
                         .map((role) => {

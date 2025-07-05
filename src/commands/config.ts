@@ -101,7 +101,7 @@ export default class ConfigCommand extends Command {
 			throw new Error("Interaction ran outside a guild");
 
 		try {
-			const [config] = await bot.drizzle
+			const [config] = await bot.db
 				.select()
 				.from(guilds)
 				.where(eq(guilds.id, BigInt(interaction.guildId)));
@@ -150,7 +150,7 @@ export default class ConfigCommand extends Command {
 		const value = interaction.options.getString("value", true);
 
 		try {
-			await bot.drizzle
+			await bot.db
 				.update(guilds)
 				.set({ [key]: value })
 				.where(eq(guilds.id, BigInt(interaction.guildId)));

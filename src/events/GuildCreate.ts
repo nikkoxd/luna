@@ -14,7 +14,7 @@ export default class GuildCreateEvent extends Event<Events.GuildCreate> {
 	async execute(guild: Guild) {
 		bot.logger.info(`Joined guild ${guild.id}.`);
 
-		const guildConfig = await bot.drizzle
+		const guildConfig = await bot.db
 			.select()
 			.from(guilds)
 			.where(eq(guilds.id, BigInt(guild.id)));
@@ -25,7 +25,7 @@ export default class GuildCreateEvent extends Event<Events.GuildCreate> {
 			return;
 		}
 
-		bot.drizzle
+		bot.db
 			.insert(guilds)
 			.values({ id: BigInt(guild.id) })
 			.then(() => {

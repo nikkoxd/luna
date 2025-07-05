@@ -135,7 +135,7 @@ export default class ImportCommand extends Command {
 
 					for (const member of parsedMembers.data) {
 						try {
-							await bot.drizzle.transaction(async (tx) => {
+							await bot.db.transaction(async (tx) => {
 								await tx
 									.insert(users)
 									.values({

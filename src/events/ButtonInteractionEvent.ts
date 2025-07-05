@@ -3,7 +3,6 @@ import {
 	ButtonBuilder,
 	ButtonInteraction,
 	ButtonStyle,
-	Colors,
 	ComponentType,
 	EmbedBuilder,
 	Events,
@@ -31,7 +30,7 @@ export default class ButtonInteractionEvent extends Event<Events.InteractionCrea
 		const rolesPerPage = 10;
 
 		try {
-			const rolesList = await bot.drizzle
+			const rolesList = await bot.db
 				.select({ id: roles.id, price: roles.price })
 				.from(roles)
 				.where(eq(roles.guildId, BigInt(interaction.guildId)));
@@ -97,7 +96,7 @@ export default class ButtonInteractionEvent extends Event<Events.InteractionCrea
 						(role) => role.id === BigInt(roleId)
 					)?.price;
 
-					const [member] = await bot.drizzle
+					const [member] = await bot.db
 						.select({ balance: members.balance })
 						.from(members)
 						.where(eq(members.id, BigInt(interaction.user.id)));
@@ -114,7 +113,7 @@ export default class ButtonInteractionEvent extends Event<Events.InteractionCrea
 					}
 
 					try {
-						await bot.drizzle
+						await bot.db
 							.update(members)
 							.set({ balance: member.balance - price! })
 							.where(eq(members.id, BigInt(interaction.user.id)));
@@ -168,7 +167,7 @@ export default class ButtonInteractionEvent extends Event<Events.InteractionCrea
 						})
 						.join("\n")
 				)
-				.setColor(Colors.LuminousVividPink),
+				.setColor(bot.config.color),
 		];
 
 		const components: (

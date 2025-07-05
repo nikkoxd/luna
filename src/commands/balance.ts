@@ -19,7 +19,7 @@ export default class BalanceCommand extends Command {
 
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
 		try {
-			const [user] = await bot.drizzle
+			const [user] = await bot.db
 				.select({ balance: members.balance })
 				.from(members)
 				.where(eq(members.id, BigInt(interaction.user.id)));

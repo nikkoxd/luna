@@ -1,13 +1,13 @@
-import { Colors, EmbedBuilder, GuildMember } from "discord.js";
+import { EmbedBuilder, GuildMember } from "discord.js";
 
-import { and, asc, eq, lte } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import i18next from "i18next";
 
 import { bot } from ".";
 import { guilds, roles } from "./schema";
 
 export async function getGuildLocale(guildId: string): Promise<string> {
-	const [config] = await bot.drizzle
+	const [config] = await bot.db
 		.select({ locale: guilds.locale })
 		.from(guilds)
 		.where(eq(guilds.id, BigInt(guildId)));
@@ -26,7 +26,7 @@ export async function sendLog(
 	language: string = "en"
 ) {
 	try {
-		const [config] = await bot.drizzle
+		const [config] = await bot.db
 			.select({ logChannelId: guilds.logChannelId })
 			.from(guilds)
 			.where(eq(guilds.id, BigInt(guildId)));
@@ -36,7 +36,7 @@ export async function sendLog(
 		}
 
 		const embed = new EmbedBuilder()
-			.setColor(Colors.Purple)
+			.setColor(bot.config.color)
 			.setTitle(i18next.t(action, { lng: language }))
 			.setDescription(
 				i18next.t(message, { ...messageArgs, lng: language })
@@ -76,7 +76,7 @@ export async function sendLog(
 
 export async function processRewards(member: GuildMember, level: number) {
 	try {
-		const result = await bot.drizzle
+		const result = await bot.db
 			.select({ id: roles.id, level: roles.level })
 			.from(roles)
 			.where(and(eq(roles.guildId, BigInt(member.guild.id))))

@@ -91,7 +91,7 @@ export default class ExpCommand extends Command {
 			const user = interaction.options.getUser("member", true);
 			const exp = interaction.options.getNumber("exp", true);
 
-			const [result] = await bot.drizzle
+			const [result] = await bot.db
 				.insert(members)
 				.values({
 					id: BigInt(user.id),
@@ -140,7 +140,7 @@ export default class ExpCommand extends Command {
 			const user = interaction.options.getUser("member", true);
 			const level = interaction.options.getNumber("level", true);
 
-			await bot.drizzle
+			await bot.db
 				.insert(members)
 				.values({
 					id: BigInt(user.id),

@@ -37,7 +37,7 @@ export default class MessageCreateEvent extends Event<Events.MessageCreate> {
 			return;
 		}
 
-		const [config] = await bot.drizzle
+		const [config] = await bot.db
 			.select({
 				minExp: guilds.minExp,
 				maxExp: guilds.maxExp,
@@ -50,7 +50,7 @@ export default class MessageCreateEvent extends Event<Events.MessageCreate> {
 		const expToAdd = randomInt(config.minExp, config.maxExp);
 		const balanceToAdd = randomInt(config.minCoins, config.maxCoins);
 
-		await bot.drizzle.transaction(async (tx) => {
+		await bot.db.transaction(async (tx) => {
 			await tx
 				.insert(users)
 				.values({

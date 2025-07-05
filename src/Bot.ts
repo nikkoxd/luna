@@ -1,37 +1,48 @@
-import { ActivityType, Client, Events } from "discord.js";
+import { ActivityType, Client, ClientOptions, Events } from "discord.js";
 
-import { NodePgDatabase } from "drizzle-orm/node-postgres";
+import { NodePgDatabase, drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import i18next, { InitOptions } from "i18next";
 import Backend from "i18next-fs-backend";
 import path from "path";
-import { Logger } from "winston";
+import { PoolConfig } from "pg";
+import { Logger, LoggerOptions, createLogger } from "winston";
 
 import { CommandHandler } from "./handlers/CommandHandler";
 import { EventHandler } from "./handlers/EventHandler";
+import { BotConfig } from "./types";
 
 export class Bot {
+	public client: Client;
+	public db: NodePgDatabase;
+	public logger: Logger;
+
 	private async runMigrations() {
-        this.logger.info("Running migrations...");
-		await migrate(this.drizzle, {
+		this.logger.info("Running migrations...");
+		await migrate(this.db, {
 			migrationsFolder: path.join(__dirname, "..", "drizzle"),
 		});
 		this.logger.info("Migrations finished.");
 	}
 
 	private async initializei18next() {
-        this.logger.info("Initializing i18next...");
+		this.logger.info("Initializing i18next...");
 		await i18next.use(Backend).init(this.i18nextOptions);
 		this.logger.info("i18next initialized.");
 	}
 
 	public constructor(
-		public client: Client,
-		public drizzle: NodePgDatabase,
-		public logger: Logger,
+		public config: BotConfig,
+		clientOptions: ClientOptions,
+		dbOptions: PoolConfig,
+		loggerOptions: LoggerOptions,
 		private i18nextOptions: InitOptions
 	) {
-		client.login(process.env.TOKEN);
+		this.client = new Client(clientOptions);
+		this.db = drizzle({ connection: dbOptions });
+		this.logger = createLogger(loggerOptions);
+
+		this.client.login(process.env.TOKEN);
 
 		this.client.on(Events.ClientReady, async (readyClient) => {
 			readyClient.user?.setActivity("dsc.gg/starrysky", {

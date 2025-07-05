@@ -14,7 +14,7 @@ export default class GuildMemberAddEvent extends Event<Events.GuildMemberAdd> {
 	}
 
 	async execute(member: GuildMember) {
-		await bot.drizzle.transaction(async (tx) => {
+		await bot.db.transaction(async (tx) => {
 			await tx
 				.insert(users)
 				.values({
@@ -39,7 +39,7 @@ export default class GuildMemberAddEvent extends Event<Events.GuildMemberAdd> {
 		)
 			return;
 
-		const [config] = await bot.drizzle
+		const [config] = await bot.db
 			.select({ joinMessage: guilds.joinMessage })
 			.from(guilds)
 			.where(eq(guilds.id, BigInt(member.guild.id)));

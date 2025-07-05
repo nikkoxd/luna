@@ -3,7 +3,6 @@ import {
 	ButtonBuilder,
 	ButtonStyle,
 	ChatInputCommandInteraction,
-	Colors,
 	EmbedBuilder,
 	MessageFlags,
 	PermissionFlagsBits,
@@ -77,7 +76,7 @@ export default class ShopCommand extends Command {
 					lng: interaction.locale,
 				})
 			)
-			.setColor(Colors.LuminousVividPink);
+			.setColor(bot.config.color);
 
 		const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
 			new ButtonBuilder()
@@ -120,7 +119,7 @@ export default class ShopCommand extends Command {
 		if (!interaction.guildId) return;
 
 		try {
-			await bot.drizzle.insert(roles).values({
+			await bot.db.insert(roles).values({
 				id: BigInt(role.id),
 				guildId: BigInt(interaction.guildId),
 
@@ -151,7 +150,7 @@ export default class ShopCommand extends Command {
 		if (!interaction.guildId) return;
 
 		try {
-			const rolesList = await bot.drizzle
+			const rolesList = await bot.db
 				.select()
 				.from(roles)
 				.where(eq(roles.guildId, BigInt(interaction.guildId)));
@@ -172,7 +171,7 @@ export default class ShopCommand extends Command {
 						})
 						.join("\n")
 				)
-				.setColor(Colors.LuminousVividPink);
+				.setColor(bot.config.color);
 
 			interaction.reply({
 				embeds: [embed],
@@ -194,7 +193,7 @@ export default class ShopCommand extends Command {
 		if (!interaction.guildId) return;
 
 		try {
-			const result = await bot.drizzle
+			const result = await bot.db
 				.delete(roles)
 				.where(
 					and(
