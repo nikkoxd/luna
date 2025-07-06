@@ -10,7 +10,7 @@ import i18next from "i18next";
 import { bot } from "..";
 import { Command } from "../base/Command";
 import { members } from "../schema";
-import { processRewards } from "../utils";
+import { getRequiredExp, processRewards } from "../utils";
 
 export default class ExpCommand extends Command {
 	constructor() {
@@ -151,6 +151,7 @@ export default class ExpCommand extends Command {
 					target: [members.id, members.guildId],
 					set: {
 						level: level,
+                        exp: getRequiredExp(level),
 					},
 				});
 
