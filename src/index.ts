@@ -11,8 +11,10 @@ dotenv.config();
 export const bot = new Bot(
 	{
 		color: "#ef75ff",
-		commandsPath: path.join(__dirname, "commands"),
-		eventsPath: path.join(__dirname, "events"),
+		path: {
+			commands: path.join(__dirname, "commands"),
+			events: path.join(__dirname, "events"),
+		},
 	},
 	{
 		intents: [

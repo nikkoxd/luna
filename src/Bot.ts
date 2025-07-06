@@ -53,12 +53,12 @@ export class Bot {
 			await this.runMigrations();
 			await this.initializei18next();
 			await EventHandler.register(
-                this.config.eventsPath,
+				this.config.path.events,
 				this.client,
 				this.logger
 			);
 			await CommandHandler.register(
-                this.config.commandsPath,
+				this.config.path.commands,
 				this.client,
 				this.logger
 			);
