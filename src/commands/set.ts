@@ -85,7 +85,7 @@ export default class ExpCommand extends Command {
 	}
 
 	private async exp(interaction: ChatInputCommandInteraction) {
-		if (!interaction.guildId) return;
+		if (!interaction.inCachedGuild()) return;
 
 		try {
 			const user = interaction.options.getUser("member", true);
@@ -112,7 +112,7 @@ export default class ExpCommand extends Command {
 
 			await processRewards(member, result.level);
 
-			interaction.reply({
+			await interaction.reply({
 				content: i18next.t("command.exp.reply.success", {
 					memberId: user.id,
 					exp: exp,
