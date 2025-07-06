@@ -91,7 +91,7 @@
   },
   "event": {
     "message_create": {
-      "level_up": "<@{{userId}}> достиг {{level}} уровня!"
+      "level_up": "<@{{userId}}> достиг {{level}} уровня!\n-# Посмотреть опыт: /level"
     }
   },
   "log": {

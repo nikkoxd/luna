@@ -91,7 +91,7 @@
   },
   "event": {
     "message_create": {
-      "level_up": "<@{{userId}}>, you just leveled up to level {{level}}!"
+      "level_up": "<@{{userId}}>, you just leveled up to level {{level}}!\n-# View exp: /level"
     }
   },
   "log": {
