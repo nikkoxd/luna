@@ -16,4 +16,6 @@ declare global {
 
 export interface BotConfig {
 	color: HexColorString;
+    commandsPath: string;
+    eventsPath: string;
 }

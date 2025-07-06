@@ -1,6 +1,7 @@
 import { GatewayIntentBits } from "discord.js";
 
 import dotenv from "dotenv";
+import path from "path";
 import { format, transports } from "winston";
 
 import { Bot } from "./Bot";
@@ -10,6 +11,8 @@ dotenv.config();
 export const bot = new Bot(
 	{
 		color: "#ef75ff",
+		commandsPath: path.join(__dirname, "commands"),
+		eventsPath: path.join(__dirname, "events"),
 	},
 	{
 		intents: [

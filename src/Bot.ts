@@ -13,9 +13,9 @@ import { EventHandler } from "./handlers/EventHandler";
 import { BotConfig } from "./types";
 
 export class Bot {
-	public client: Client;
-	public db: NodePgDatabase;
-	public logger: Logger;
+	public readonly client: Client;
+	public readonly db: NodePgDatabase;
+	public readonly logger: Logger;
 
 	private async runMigrations() {
 		this.logger.info("Running migrations...");
@@ -32,15 +32,15 @@ export class Bot {
 	}
 
 	public constructor(
-		public config: BotConfig,
-		clientOptions: ClientOptions,
-		dbOptions: PoolConfig,
-		loggerOptions: LoggerOptions,
+		public readonly config: BotConfig,
+		private clientOptions: ClientOptions,
+		private dbOptions: PoolConfig,
+		private loggerOptions: LoggerOptions,
 		private i18nextOptions: InitOptions
 	) {
-		this.client = new Client(clientOptions);
-		this.db = drizzle({ connection: dbOptions });
-		this.logger = createLogger(loggerOptions);
+		this.client = new Client(this.clientOptions);
+		this.db = drizzle({ connection: this.dbOptions });
+		this.logger = createLogger(this.loggerOptions);
 
 		this.client.login(process.env.TOKEN);
 
@@ -53,12 +53,12 @@ export class Bot {
 			await this.runMigrations();
 			await this.initializei18next();
 			await EventHandler.register(
-				path.join(__dirname, "events"),
+                this.config.eventsPath,
 				this.client,
 				this.logger
 			);
 			await CommandHandler.register(
-				path.join(__dirname, "commands"),
+                this.config.commandsPath,
 				this.client,
 				this.logger
 			);
