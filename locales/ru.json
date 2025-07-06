@@ -66,7 +66,7 @@
     },
     "level": {
       "reply": {
-        "level": "Твой уровень: {{level}}."
+        "level": "Твой уровень: {{level}}. Опыт: {{currentExp}}/{{requiredExp}}"
       }
     },
     "set": {

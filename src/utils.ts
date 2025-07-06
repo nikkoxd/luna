@@ -103,3 +103,11 @@ export async function processRewards(member: GuildMember, level: number) {
 		bot.logger.error(error);
 	}
 }
+
+export function getRequiredExp(level: number) {
+	return 12.5 * (Math.pow(2 * level + 1, 2) - 1);
+}
+
+export function getLevel(exp: number) {
+	return Math.floor((Math.sqrt((4 * exp) / 50 + 1) - 1) / 2);
+}

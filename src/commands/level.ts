@@ -6,6 +6,7 @@ import i18next from "i18next";
 import { bot } from "..";
 import { Command } from "../base/Command";
 import { members } from "../schema";
+import { getRequiredExp } from "../utils";
 
 export default class LevelCommand extends Command {
 	constructor() {
@@ -22,13 +23,15 @@ export default class LevelCommand extends Command {
 	): Promise<void> {
 		try {
 			const [user] = await bot.db
-				.select({ level: members.level })
+				.select({ level: members.level, exp: members.exp })
 				.from(members)
 				.where(eq(members.id, BigInt(interaction.user.id)));
 
-			interaction.reply({
+			await interaction.reply({
 				content: i18next.t("command.level.reply.level", {
 					level: user.level,
+                    currentExp: user.exp,
+                    requiredExp: getRequiredExp(user.level + 1),
 					lng: interaction.locale,
 				}),
 			});
@@ -36,6 +39,8 @@ export default class LevelCommand extends Command {
 			interaction.reply({
 				content: i18next.t("command.level.reply.level", {
 					level: 0,
+                    currentExp: 0,
+                    requiredExp: getRequiredExp(1),
 					lng: interaction.locale,
 				}),
 			});
