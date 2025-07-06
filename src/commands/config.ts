@@ -1,5 +1,6 @@
 import {
 	ChatInputCommandInteraction,
+	EmbedBuilder,
 	MessageFlags,
 	PermissionFlagsBits,
 	SlashCommandBuilder,
@@ -97,7 +98,7 @@ export default class ConfigCommand extends Command {
 	}
 
 	async view(interaction: ChatInputCommandInteraction) {
-		if (!interaction.guildId)
+		if (!interaction.inCachedGuild())
 			throw new Error("Interaction ran outside a guild");
 
 		try {
@@ -143,17 +144,54 @@ export default class ConfigCommand extends Command {
 	}
 
 	async edit(interaction: ChatInputCommandInteraction) {
-		if (!interaction.guildId)
+		if (!interaction.inCachedGuild())
 			throw new Error("Interaction ran outside a guild");
 
 		const key = interaction.options.getString("key", true);
 		const value = interaction.options.getString("value", true);
 
 		try {
-			await bot.db
+			const [config] = await bot.db
 				.update(guilds)
 				.set({ [key]: value })
-				.where(eq(guilds.id, BigInt(interaction.guildId)));
+				.where(eq(guilds.id, BigInt(interaction.guildId)))
+				.returning();
+
+			if (config.logChannelId) {
+				const logChannel = interaction.guild.channels.cache.get(
+					config.logChannelId.toString()
+				);
+
+				if (logChannel?.isSendable()) {
+					const embed = new EmbedBuilder()
+						.setTitle(
+							i18next.t("log.config.title", {
+								lng: interaction.locale,
+							})
+						)
+						.setColor(bot.config.color)
+                        .setDescription(
+                            [
+                                i18next.t("log.config.key", {
+                                    lng: config.locale,
+                                    key,
+                                }),
+                                i18next.t("log.config.value", {
+                                    lng: config.locale,
+                                    value,
+                                }),
+                            ].join("\n")
+                        )
+						.setFooter({
+							text: i18next.t("log.responsible", {
+								lng: interaction.locale,
+								tag: interaction.user.tag,
+							}),
+						});
+
+					await logChannel.send({ embeds: [embed] });
+				}
+			}
 
 			await interaction.reply({
 				content: i18next.t("command.config.reply.success", {

@@ -95,7 +95,12 @@
     }
   },
   "log": {
-    "responsible": "Responsible",
-    "target": "Target"
+    "responsible": "Responsible: @{{tag}}",
+    "target": "Target",
+    "config": {
+      "title": "Server config edited",
+      "key": "**Key:** {{key}}",
+      "value": "**Value:** {{value}}"
+    }
   }
 }
