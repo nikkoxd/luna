@@ -1,13 +1,13 @@
 import { Collection, Events, Message } from "discord.js";
 
 import { randomInt } from "crypto";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import i18next from "i18next";
 
 import { bot } from "..";
 import { Event } from "../base/Event";
 import { guilds, members, users } from "../schema";
-import { getGuildLocale, processRewards } from "../utils";
+import { getGuildLocale, processRewards, updateMemberBalance, updateMemberExp, updateMemberLevel } from "../utils";
 
 export default class MessageCreateEvent extends Event<Events.MessageCreate> {
 	constructor() {
@@ -30,7 +30,6 @@ export default class MessageCreateEvent extends Event<Events.MessageCreate> {
 		setTimeout(() => this.timestamps.delete(userId), this.cooldown);
 		return false;
 	}
-
 
 	private async processMessage(message: Message): Promise<void> {
 		if (!message.guild) {
@@ -82,12 +81,13 @@ export default class MessageCreateEvent extends Event<Events.MessageCreate> {
 				.onConflictDoUpdate({
 					target: [members.id, members.guildId],
 					set: {
-						exp: sql`${members.exp} + ${expToAdd}`,
-						balance: sql`${members.balance} + ${balanceToAdd}`,
-						level: sql`FLOOR((SQRT(4 * (${members.exp} + ${expToAdd}) / 50 + 1) - 1) / 2)`,
+						exp: updateMemberExp(expToAdd),
+						balance: updateMemberBalance(balanceToAdd),
+						level: updateMemberLevel(expToAdd),
 					},
 				})
 				.returning({ level: members.level });
+
 			const newLevel = updatedMember ? updatedMember.level : 0;
 
 			if (newLevel > previousLevel) {

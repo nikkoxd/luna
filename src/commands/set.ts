@@ -4,13 +4,12 @@ import {
 	SlashCommandBuilder,
 } from "discord.js";
 
-import { sql } from "drizzle-orm";
 import i18next from "i18next";
 
 import { bot } from "..";
 import { Command } from "../base/Command";
 import { members } from "../schema";
-import { getRequiredExp, processRewards } from "../utils";
+import { expToLevelSQL, levelToExp, processRewards } from "../utils";
 
 export default class ExpCommand extends Command {
 	constructor() {
@@ -102,7 +101,7 @@ export default class ExpCommand extends Command {
 					target: [members.id, members.guildId],
 					set: {
 						exp: exp,
-						level: sql`FLOOR((SQRT(4 * ${exp} / 50 + 1) - 1) / 2)`,
+						level: expToLevelSQL(exp),
 					},
 				})
 				.returning();
@@ -151,7 +150,7 @@ export default class ExpCommand extends Command {
 					target: [members.id, members.guildId],
 					set: {
 						level: level,
-                        exp: getRequiredExp(level),
+						exp: levelToExp(level),
 					},
 				});
 

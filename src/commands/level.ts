@@ -6,7 +6,7 @@ import i18next from "i18next";
 import { bot } from "..";
 import { Command } from "../base/Command";
 import { members } from "../schema";
-import { getRequiredExp } from "../utils";
+import { levelToExp } from "../utils";
 
 export default class LevelCommand extends Command {
 	constructor() {
@@ -31,7 +31,7 @@ export default class LevelCommand extends Command {
 				content: i18next.t("command.level.reply.level", {
 					level: user.level,
                     currentExp: user.exp,
-                    requiredExp: getRequiredExp(user.level + 1),
+                    requiredExp: levelToExp(user.level + 1),
 					lng: interaction.locale,
 				}),
 			});
@@ -40,7 +40,7 @@ export default class LevelCommand extends Command {
 				content: i18next.t("command.level.reply.level", {
 					level: 0,
                     currentExp: 0,
-                    requiredExp: getRequiredExp(1),
+                    requiredExp: levelToExp(1),
 					lng: interaction.locale,
 				}),
 			});
