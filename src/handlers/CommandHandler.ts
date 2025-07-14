@@ -3,6 +3,7 @@ import {
 	Client,
 	Events,
 	Interaction,
+	MessageFlags,
 	REST,
 	Routes,
 } from "discord.js";
@@ -12,6 +13,7 @@ import path from "path";
 import { Logger } from "winston";
 
 import { Command } from "../base/Command";
+import i18next from "i18next";
 
 export class CommandHandler {
 	public static commands = new Array<ApplicationCommandDataResolvable>();
@@ -79,9 +81,14 @@ export class CommandHandler {
 					await command.execute(interaction);
 				} catch (error) {
 					logger.error(error);
+
+                    await interaction.reply({
+                        content: i18next.t("internal_error"),
+                        flags: [MessageFlags.Ephemeral]
+                    })
 				} finally {
 					logger.info(
-						`Command /${command.data.name} executed by ${interaction.user.tag} (${interaction.user.id})`
+						`Command /${command.data.name} was executed by ${interaction.user.tag} (${interaction.user.id})`
 					);
 				}
 			}
