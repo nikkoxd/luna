@@ -75,6 +75,14 @@
           "success": "Set <@{{memberId}}>'s level to `{{level}}`"
         }
       }
+    },
+    "give": {
+      "coins": {
+        "reply": {
+          "error": "Failed to give coins to user",
+          "success": "Gave {{amount}} coins to <@{{userId}}>"
+        }
+      }
     }
   },
   "developer-only": "This command can only be run by the bot's developer.",
