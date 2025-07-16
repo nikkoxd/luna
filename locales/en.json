@@ -83,6 +83,26 @@
           "success": "Gave {{amount}} coins to <@{{userId}}>"
         }
       }
+    },
+    "block": {
+      "reply": {
+        "error": "An error occured while editing channel permissions"
+      },
+      "gifs": {
+        "reply": {
+          "success": "Successfully blocked sending GIFs for <@{{userId}}>"
+        }
+      }
+    },
+    "unblock": {
+      "reply": {
+        "error": "An error occured while editing channel permissions"
+      },
+      "gifs": {
+        "reply": {
+          "success": "Successfully unblocked sending GIFs for <@{{userId}}>"
+        }
+      }
     }
   },
   "developer-only": "This command can only be run by the bot's developer.",
