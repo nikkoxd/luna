@@ -18,6 +18,7 @@ export default class BlockCommand extends Command {
 					"ru",
 					"Блокировка доступа к чему-то"
 				)
+                .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
 				.addSubcommand((subcommand) =>
 					subcommand
 						.setName("gifs")

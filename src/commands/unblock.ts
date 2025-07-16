@@ -1,6 +1,7 @@
 import {
 	ChatInputCommandInteraction,
 	MessageFlags,
+	PermissionFlagsBits,
 	SlashCommandBuilder,
 } from "discord.js";
 
@@ -19,6 +20,7 @@ export default class UnblockCommand extends Command {
 					"ru",
 					"Разблокировка доступа к чему-то"
 				)
+				.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
 				.addSubcommand((subcommand) =>
 					subcommand
 						.setName("gifs")
