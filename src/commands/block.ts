@@ -1,12 +1,14 @@
 import {
 	ChatInputCommandInteraction,
 	MessageFlags,
+	PermissionFlagsBits,
 	SlashCommandBuilder,
 } from "discord.js";
 
+import i18next from "i18next";
+
 import { bot } from "..";
 import { Command } from "../base/Command";
-import i18next from "i18next";
 
 export default class BlockCommand extends Command {
 	constructor() {
@@ -18,7 +20,7 @@ export default class BlockCommand extends Command {
 					"ru",
 					"Блокировка доступа к чему-то"
 				)
-                .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
+				.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
 				.addSubcommand((subcommand) =>
 					subcommand
 						.setName("gifs")
@@ -65,13 +67,13 @@ export default class BlockCommand extends Command {
 				flags: [MessageFlags.Ephemeral],
 			});
 		} finally {
-            await interaction.reply({
-                content: i18next.t("command.block.gifs.reply.success", {
-                    userId: user.id,
-                }),
-                flags: [MessageFlags.Ephemeral],
-            });
-        }
+			await interaction.reply({
+				content: i18next.t("command.block.gifs.reply.success", {
+					userId: user.id,
+				}),
+				flags: [MessageFlags.Ephemeral],
+			});
+		}
 	}
 
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
