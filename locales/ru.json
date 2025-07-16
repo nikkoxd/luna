@@ -61,7 +61,8 @@
     },
     "balance": {
       "reply": {
-        "balance": "Твой баланс: {{balance}} монеток."
+        "balance": "Твой баланс: {{balance}} монеток.",
+        "balance_2": "Баланс {{tag}}: {{balance}} монеток."
       }
     },
     "level": {

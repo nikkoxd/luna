@@ -61,7 +61,8 @@
     },
     "balance": {
       "reply": {
-        "balance": "Your balance: {{balance}} coins."
+        "balance": "Your balance: {{balance}} coins.",
+        "balance_2": "{{tag}}'s balance: {{balance}} coins."
       }
     },
     "level": {
