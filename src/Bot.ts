@@ -11,6 +11,7 @@ import { Logger, LoggerOptions, createLogger } from "winston";
 import { CommandHandler } from "./handlers/CommandHandler";
 import { EventHandler } from "./handlers/EventHandler";
 import { BotConfig } from "./types";
+import { ButtonHandler } from "./handlers/ButtonHandler";
 
 export class Bot {
 	public readonly client: Client;
@@ -57,6 +58,11 @@ export class Bot {
 				this.client,
 				this.logger
 			);
+            await ButtonHandler.register(
+                this.config.path.buttons,
+                this.logger
+            )
+            await ButtonHandler.onInteractionCreate(this.client, this.logger);
 			await CommandHandler.register(
 				this.config.path.commands,
 				this.client,
