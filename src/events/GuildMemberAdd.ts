@@ -6,7 +6,7 @@ import i18next from "i18next";
 import { bot } from "..";
 import { Event } from "../base/Event";
 import { guilds, members, users } from "../schema";
-import { getGuildLocale } from "../utils";
+import { getGuildLocale } from "../shared/locale";
 
 export default class GuildMemberAddEvent extends Event<Events.GuildMemberAdd> {
 	constructor() {

@@ -6,7 +6,7 @@ import i18next from "i18next";
 import { bot } from "..";
 import { Command } from "../base/Command";
 import { members } from "../schema";
-import { levelToExp } from "../utils";
+import { levelToExp } from "../shared/conversions";
 
 export default class LevelCommand extends Command {
 	constructor() {

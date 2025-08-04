@@ -9,7 +9,8 @@ import i18next from "i18next";
 import { bot } from "..";
 import { Command } from "../base/Command";
 import { members } from "../schema";
-import { expToLevelSQL, levelToExp, processRewards } from "../utils";
+import { processRewards } from "../shared/rewards";
+import { expToLevelSQL, levelToExp } from "../shared/conversions";
 
 export default class ExpCommand extends Command {
 	constructor() {
