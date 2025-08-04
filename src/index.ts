@@ -14,6 +14,7 @@ export const bot = new Bot(
 		path: {
 			commands: path.join(__dirname, "commands"),
 			events: path.join(__dirname, "events"),
+            buttons: path.join(__dirname, "buttons")
 		},
 	},
 	{

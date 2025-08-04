@@ -19,5 +19,6 @@ export interface BotConfig {
     path: {
         commands: string;
         events: string;
+        buttons: string;
     }
 }
