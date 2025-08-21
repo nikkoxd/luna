@@ -6,20 +6,14 @@ import {
 } from "discord.js";
 
 export abstract class Command {
-	public data:
-		| SlashCommandBuilder
-		| SlashCommandOptionsOnlyBuilder
-		| SlashCommandSubcommandsOnlyBuilder;
 	public abstract execute(
 		interaction: ChatInputCommandInteraction
 	): Promise<void>;
 
 	protected constructor(
-		data:
+		public data:
 			| SlashCommandBuilder
 			| SlashCommandOptionsOnlyBuilder
 			| SlashCommandSubcommandsOnlyBuilder
-	) {
-		this.data = data;
-	}
+	) {}
 }
