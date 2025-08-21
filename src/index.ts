@@ -1,4 +1,4 @@
-import { GatewayIntentBits } from "discord.js";
+import { ActivityType, GatewayIntentBits } from "discord.js";
 
 import dotenv from "dotenv";
 import path from "path";
@@ -11,6 +11,11 @@ dotenv.config();
 export const bot = new Bot(
 	{
 		color: "#ef75ff",
+        activity: {
+            name: "dsc.gg/starrysky",
+            type: ActivityType.Watching,
+            url: "https://dsc.gg/starrysky"
+        },
 		path: {
 			commands: path.join(__dirname, "commands"),
 			events: path.join(__dirname, "events"),
