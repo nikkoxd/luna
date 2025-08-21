@@ -7,7 +7,13 @@ import i18next from "i18next";
 import { bot } from "..";
 import { Event } from "../base/Event";
 import { guilds, members, users } from "../schema";
-import { getGuildLocale, processRewards, updateMemberBalance, updateMemberExp, updateMemberLevel } from "../utils";
+import {
+	updateMemberBalance,
+	updateMemberExp,
+	updateMemberLevel,
+} from "../shared/conversions";
+import { getGuildLocale } from "../shared/locale";
+import { processRewards } from "../shared/rewards";
 
 export default class MessageCreateEvent extends Event<Events.MessageCreate> {
 	constructor() {
