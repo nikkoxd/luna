@@ -1,4 +1,10 @@
-import { ActivityType, Client, ClientOptions, Events } from "discord.js";
+import {
+	ActivityType,
+	Client,
+	ClientOptions,
+	Events,
+	HexColorString,
+} from "discord.js";
 
 import { NodePgDatabase, drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
@@ -8,10 +14,23 @@ import path from "path";
 import { PoolConfig } from "pg";
 import { Logger, LoggerOptions, createLogger } from "winston";
 
+import { ButtonHandler } from "./handlers/ButtonHandler";
 import { CommandHandler } from "./handlers/CommandHandler";
 import { EventHandler } from "./handlers/EventHandler";
-import { BotConfig } from "./types";
-import { ButtonHandler } from "./handlers/ButtonHandler";
+
+export interface BotConfig {
+	color: HexColorString;
+	activity: {
+		name: string;
+		type?: ActivityType;
+		url?: string;
+	};
+	path: {
+		commands: string;
+		events: string;
+		buttons: string;
+	};
+}
 
 export class Bot {
 	public readonly client: Client;
@@ -46,9 +65,9 @@ export class Bot {
 		this.client.login(process.env.TOKEN);
 
 		this.client.on(Events.ClientReady, async (readyClient) => {
-			readyClient.user?.setActivity("dsc.gg/starrysky", {
-				type: ActivityType.Watching,
-				url: "https://dsc.gg/starrysky",
+			readyClient.user?.setActivity(config.activity.name, {
+				type: config.activity.type,
+				url: config.activity.url,
 			});
 
 			await this.runMigrations();
@@ -58,11 +77,8 @@ export class Bot {
 				this.client,
 				this.logger
 			);
-            await ButtonHandler.register(
-                this.config.path.buttons,
-                this.logger
-            )
-            await ButtonHandler.onInteractionCreate(this.client, this.logger);
+			await ButtonHandler.register(this.config.path.buttons, this.logger);
+			await ButtonHandler.onInteractionCreate(this.client, this.logger);
 			await CommandHandler.register(
 				this.config.path.commands,
 				this.client,
