@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import i18next from "i18next";
 
 import { bot } from "..";
@@ -22,10 +22,12 @@ export default class LevelCommand extends Command {
 		interaction: ChatInputCommandInteraction
 	): Promise<void> {
 		try {
+            if (!interaction.inGuild()) throw new Error("Not in guild");
+
 			const [user] = await bot.db
 				.select({ level: members.level, exp: members.exp })
 				.from(members)
-				.where(eq(members.id, BigInt(interaction.user.id)));
+				.where(and(eq(members.id, BigInt(interaction.user.id)), eq(members.guildId, BigInt(interaction.guildId))));
 
 			await interaction.reply({
 				content: i18next.t("command.level.reply.level", {
