@@ -48,9 +48,6 @@ export default class ProfileCommand extends Command {
 	) {
 		const bannerURL =
 			user.bannerURL({
-				extension: "gif",
-			}) ||
-			user.bannerURL({
 				extension: "png",
 			});
 
@@ -163,7 +160,7 @@ export default class ProfileCommand extends Command {
 		ctx.fillRect(
 			220,
 			canvas.height - 50,
-			(currentExp / requiredExp) * (canvas.width - 260),
+			Math.min((currentExp / requiredExp) * (canvas.width - 260), canvas.width - 260),
 			10
 		);
 		ctx.restore();
