@@ -5,7 +5,8 @@
 	"main": "build/index.js",
 	"scripts": {
 		"db:generate": "drizzle-kit generate",
-		"build": "tsc",
+        "copy-assets": "cp -r src/assets build",
+		"build": "tsc && pnpm copy-assets",
 		"dev": "nodemon src/index.ts"
 	},
 	"keywords": [],
