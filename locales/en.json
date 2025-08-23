@@ -131,5 +131,10 @@
       "key": "**Key:** {{key}}",
       "value": "**Value:** {{value}}"
     }
+  },
+  "commands": {
+    "level": {
+      "level": "Level {{level}}"
+    }
   }
 }

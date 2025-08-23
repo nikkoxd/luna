@@ -12,6 +12,7 @@
 	"author": "",
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
+		"@napi-rs/canvas": "^0.1.77",
 		"discord.js": "^14.19.3",
 		"dotenv": "^16.5.0",
 		"drizzle-orm": "^0.43.1",

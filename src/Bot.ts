@@ -17,6 +17,7 @@ import { Logger, LoggerOptions, createLogger } from "winston";
 import { ButtonHandler } from "./handlers/ButtonHandler";
 import { CommandHandler } from "./handlers/CommandHandler";
 import { EventHandler } from "./handlers/EventHandler";
+import { GlobalFonts } from "@napi-rs/canvas";
 
 export interface BotConfig {
 	color: HexColorString;
@@ -51,6 +52,15 @@ export class Bot {
 		this.logger.info("i18next initialized.");
 	}
 
+    private async registerFonts() {
+        this.logger.info("Registering fonts...");
+
+        GlobalFonts.registerFromPath(path.join(__dirname, "assets/fonts/NataSans-Regular.ttf"), "Nata Sans");
+        GlobalFonts.registerFromPath(path.join(__dirname, "assets/fonts/NataSans-Bold.ttf"), "Nata Sans");
+
+        this.logger.info("Fonts registered.");
+    }
+
 	public constructor(
 		public readonly config: BotConfig,
 		private clientOptions: ClientOptions,
@@ -72,6 +82,7 @@ export class Bot {
 
 			await this.runMigrations();
 			await this.initializei18next();
+            await this.registerFonts();
 			await EventHandler.register(
 				this.config.path.events,
 				this.client,
